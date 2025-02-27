@@ -21,6 +21,7 @@ jobs:
       - name: Build
         run: |
           corepack enable
+          npm ci
           npx turbo run build
       - run: |
           pwd
