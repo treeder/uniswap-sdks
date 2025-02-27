@@ -1,7 +1,7 @@
 import { Currency, CurrencyAmount, Ether, WETH9, Percent, Price, sqrt, Token, TradeType } from '@uniswap/sdk-core'
 import { ADDRESS_ZERO, FEE_AMOUNT_MEDIUM, TICK_SPACING_SIXTY } from '../internalConstants'
 import JSBI from 'jsbi'
-import { nearestUsableTick, encodeSqrtRatioX96, TickMath } from '@uniswap/v3-sdk'
+import { nearestUsableTick, encodeSqrtRatioX96, TickMath } from '@treeder/uniswap-v3-sdk'
 import { Pool } from './pool'
 import { Route } from './route'
 import { Trade } from './trade'
@@ -754,11 +754,11 @@ describe('Trade', () => {
       let exactIn: Trade<Token, Token, TradeType.EXACT_INPUT>
       beforeEach(
         async () =>
-          (exactIn = await Trade.fromRoute(
-            new Route([pool_0_1, pool_1_2], token0, token2),
-            CurrencyAmount.fromRawAmount(token0, 10000),
-            TradeType.EXACT_INPUT
-          ))
+        (exactIn = await Trade.fromRoute(
+          new Route([pool_0_1, pool_1_2], token0, token2),
+          CurrencyAmount.fromRawAmount(token0, 10000),
+          TradeType.EXACT_INPUT
+        ))
       )
 
       it('throws if less than 0', () => {

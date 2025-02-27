@@ -2,7 +2,7 @@ import { BigintIsh, Percent, Price, CurrencyAmount, Currency, MaxUint256 } from 
 import JSBI from 'jsbi'
 import invariant from 'tiny-invariant'
 import { Pool } from './pool'
-import { encodeSqrtRatioX96, maxLiquidityForAmounts, SqrtPriceMath, TickMath } from '@uniswap/v3-sdk'
+import { encodeSqrtRatioX96, maxLiquidityForAmounts, SqrtPriceMath, TickMath } from '@treeder/uniswap-v3-sdk'
 import { ZERO } from '../internalConstants'
 import { tickToPrice } from '../utils/priceTickConversions'
 import { AllowanceTransferPermitBatch } from '../PositionManager'

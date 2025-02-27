@@ -9,7 +9,7 @@ import {
   TickDataProvider,
   TickListDataProvider,
   TickMath,
-} from '@uniswap/v3-sdk'
+} from '@treeder/uniswap-v3-sdk'
 import { AbiCoder, isAddress } from 'ethers'
 import { sortsBefore } from '../utils/sortsBefore'
 import { Hook } from '../utils/hook'

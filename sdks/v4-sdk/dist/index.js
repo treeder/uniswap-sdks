@@ -4,11 +4,11 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __require = /* @__PURE__ */ ((x2) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x2, {
+var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x, {
   get: (a, b2) => (typeof require !== "undefined" ? require : a)[b2]
-}) : x2)(function(x2) {
+}) : x)(function(x) {
   if (typeof require !== "undefined") return require.apply(this, arguments);
-  throw Error('Dynamic require of "' + x2 + '" is not supported');
+  throw Error('Dynamic require of "' + x + '" is not supported');
 });
 var __commonJS = (cb, mod2) => function __require2() {
   return mod2 || (0, cb[__getOwnPropNames(cb)[0]])((mod2 = { exports: {} }).exports, mod2), mod2.exports;
@@ -5079,8 +5079,8 @@ var require_bn = __commonJS({
         }
         return res;
       };
-      function FFTM(x2, y) {
-        this.x = x2;
+      function FFTM(x, y) {
+        this.x = x;
         this.y = y;
       }
       FFTM.prototype.makeRBT = function makeRBT(N3) {
@@ -5091,12 +5091,12 @@ var require_bn = __commonJS({
         }
         return t;
       };
-      FFTM.prototype.revBin = function revBin(x2, l, N3) {
-        if (x2 === 0 || x2 === N3 - 1) return x2;
+      FFTM.prototype.revBin = function revBin(x, l, N3) {
+        if (x === 0 || x === N3 - 1) return x;
         var rb = 0;
         for (var i = 0; i < l; i++) {
-          rb |= (x2 & 1) << l - i - 1;
-          x2 >>= 1;
+          rb |= (x & 1) << l - i - 1;
+          x >>= 1;
         }
         return rb;
       };
@@ -5191,8 +5191,8 @@ var require_bn = __commonJS({
         }
         return ph;
       };
-      FFTM.prototype.mulp = function mulp(x2, y, out) {
-        var N3 = 2 * this.guessLen13b(x2.length, y.length);
+      FFTM.prototype.mulp = function mulp(x, y, out) {
+        var N3 = 2 * this.guessLen13b(x.length, y.length);
         var rbt = this.makeRBT(N3);
         var _ = this.stub(N3);
         var rws = new Array(N3);
@@ -5203,7 +5203,7 @@ var require_bn = __commonJS({
         var niwst = new Array(N3);
         var rmws = out.words;
         rmws.length = N3;
-        this.convert13b(x2.words, x2.length, rws, N3);
+        this.convert13b(x.words, x.length, rws, N3);
         this.convert13b(y.words, y.length, nrws, N3);
         this.transform(rws, _, rwst, iwst, N3, rbt);
         this.transform(nrws, _, nrwst, niwst, N3, rbt);
@@ -5216,8 +5216,8 @@ var require_bn = __commonJS({
         this.transform(rwst, iwst, rmws, _, N3, rbt);
         this.conjugate(rmws, _, N3);
         this.normalize13b(rmws, N3);
-        out.negative = x2.negative ^ y.negative;
-        out.length = x2.length + y.length;
+        out.negative = x.negative ^ y.negative;
+        out.length = x.length + y.length;
         return out._strip();
       };
       BN2.prototype.mul = function mul(num) {
@@ -5679,29 +5679,29 @@ var require_bn = __commonJS({
       BN2.prototype.egcd = function egcd(p) {
         assert2(p.negative === 0);
         assert2(!p.isZero());
-        var x2 = this;
+        var x = this;
         var y = p.clone();
-        if (x2.negative !== 0) {
-          x2 = x2.umod(p);
+        if (x.negative !== 0) {
+          x = x.umod(p);
         } else {
-          x2 = x2.clone();
+          x = x.clone();
         }
         var A = new BN2(1);
         var B = new BN2(0);
         var C = new BN2(0);
         var D = new BN2(1);
         var g = 0;
-        while (x2.isEven() && y.isEven()) {
-          x2.iushrn(1);
+        while (x.isEven() && y.isEven()) {
+          x.iushrn(1);
           y.iushrn(1);
           ++g;
         }
         var yp = y.clone();
-        var xp = x2.clone();
-        while (!x2.isZero()) {
-          for (var i = 0, im = 1; (x2.words[0] & im) === 0 && i < 26; ++i, im <<= 1) ;
+        var xp = x.clone();
+        while (!x.isZero()) {
+          for (var i = 0, im = 1; (x.words[0] & im) === 0 && i < 26; ++i, im <<= 1) ;
           if (i > 0) {
-            x2.iushrn(i);
+            x.iushrn(i);
             while (i-- > 0) {
               if (A.isOdd() || B.isOdd()) {
                 A.iadd(yp);
@@ -5723,12 +5723,12 @@ var require_bn = __commonJS({
               D.iushrn(1);
             }
           }
-          if (x2.cmp(y) >= 0) {
-            x2.isub(y);
+          if (x.cmp(y) >= 0) {
+            x.isub(y);
             A.isub(C);
             B.isub(D);
           } else {
-            y.isub(x2);
+            y.isub(x);
             C.isub(A);
             D.isub(B);
           }
@@ -6693,15 +6693,15 @@ var require_sha3 = __commonJS({
         }
         return this;
       };
-      Keccak2.prototype.encode = function(x2, right) {
-        var o = x2 & 255, n2 = 1;
+      Keccak2.prototype.encode = function(x, right) {
+        var o = x & 255, n2 = 1;
         var bytes2 = [o];
-        x2 = x2 >> 8;
-        o = x2 & 255;
+        x = x >> 8;
+        o = x & 255;
         while (o > 0) {
           bytes2.unshift(o);
-          x2 = x2 >> 8;
-          o = x2 & 255;
+          x = x >> 8;
+          o = x & 255;
           ++n2;
         }
         if (right) {
@@ -7074,7 +7074,7 @@ import {
   NoTickDataProvider,
   TickListDataProvider,
   TickMath
-} from "@uniswap/v3-sdk";
+} from "@treeder/uniswap-v3-sdk";
 
 // ../../node_modules/ethers/lib.esm/ethers.js
 var ethers_exports = {};
@@ -10094,9 +10094,9 @@ var _2n = /* @__PURE__ */ BigInt(2);
 var _7n = /* @__PURE__ */ BigInt(7);
 var _256n = /* @__PURE__ */ BigInt(256);
 var _0x71n = /* @__PURE__ */ BigInt(113);
-for (let round = 0, R = _1n, x2 = 1, y = 0; round < 24; round++) {
-  [x2, y] = [y, (2 * x2 + 3 * y) % 5];
-  SHA3_PI.push(2 * (5 * y + x2));
+for (let round = 0, R = _1n, x = 1, y = 0; round < 24; round++) {
+  [x, y] = [y, (2 * x + 3 * y) % 5];
+  SHA3_PI.push(2 * (5 * y + x));
   SHA3_ROTL.push((round + 1) * (round + 2) / 2 % 64);
   let t = _0n;
   for (let j = 0; j < 7; j++) {
@@ -10112,18 +10112,18 @@ var rotlL = (h, l, s) => s > 32 ? rotlBL(h, l, s) : rotlSL(h, l, s);
 function keccakP(s, rounds = 24) {
   const B = new Uint32Array(5 * 2);
   for (let round = 24 - rounds; round < 24; round++) {
-    for (let x2 = 0; x2 < 10; x2++)
-      B[x2] = s[x2] ^ s[x2 + 10] ^ s[x2 + 20] ^ s[x2 + 30] ^ s[x2 + 40];
-    for (let x2 = 0; x2 < 10; x2 += 2) {
-      const idx1 = (x2 + 8) % 10;
-      const idx0 = (x2 + 2) % 10;
+    for (let x = 0; x < 10; x++)
+      B[x] = s[x] ^ s[x + 10] ^ s[x + 20] ^ s[x + 30] ^ s[x + 40];
+    for (let x = 0; x < 10; x += 2) {
+      const idx1 = (x + 8) % 10;
+      const idx0 = (x + 2) % 10;
       const B0 = B[idx0];
       const B1 = B[idx0 + 1];
       const Th = rotlH(B0, B1, 1) ^ B[idx1];
       const Tl = rotlL(B0, B1, 1) ^ B[idx1 + 1];
       for (let y = 0; y < 50; y += 10) {
-        s[x2 + y] ^= Th;
-        s[x2 + y + 1] ^= Tl;
+        s[x + y] ^= Th;
+        s[x + y + 1] ^= Tl;
       }
     }
     let curH = s[2];
@@ -10139,10 +10139,10 @@ function keccakP(s, rounds = 24) {
       s[PI + 1] = Tl;
     }
     for (let y = 0; y < 50; y += 10) {
-      for (let x2 = 0; x2 < 10; x2++)
-        B[x2] = s[y + x2];
-      for (let x2 = 0; x2 < 10; x2++)
-        s[y + x2] ^= ~B[(x2 + 2) % 10] & B[(x2 + 4) % 10];
+      for (let x = 0; x < 10; x++)
+        B[x] = s[y + x];
+      for (let x = 0; x < 10; x++)
+        s[y + x] ^= ~B[(x + 2) % 10] & B[(x + 4) % 10];
     }
     s[0] ^= SHA3_IOTA_H[round];
     s[1] ^= SHA3_IOTA_L[round];
@@ -10421,17 +10421,17 @@ var Kr = /* @__PURE__ */ new Uint32Array([
   0
 ]);
 var rotl = (word, shift) => word << shift | word >>> 32 - shift;
-function f(group, x2, y, z) {
+function f(group, x, y, z) {
   if (group === 0)
-    return x2 ^ y ^ z;
+    return x ^ y ^ z;
   else if (group === 1)
-    return x2 & y | ~x2 & z;
+    return x & y | ~x & z;
   else if (group === 2)
-    return (x2 | ~y) ^ z;
+    return (x | ~y) ^ z;
   else if (group === 3)
-    return x2 & z | y & ~z;
+    return x & z | y & ~z;
   else
-    return x2 ^ (y | ~z);
+    return x ^ (y | ~z);
 }
 var BUF = /* @__PURE__ */ new Uint32Array(16);
 var RIPEMD160 = class extends SHA2 {
@@ -11318,8 +11318,8 @@ function pow(num, power, modulo) {
   }
   return res;
 }
-function pow2(x2, power, modulo) {
-  let res = x2;
+function pow2(x, power, modulo) {
+  let res = x;
   while (power-- > _0n3) {
     res *= res;
     res %= modulo;
@@ -11332,18 +11332,18 @@ function invert(number2, modulo) {
   }
   let a = mod(number2, modulo);
   let b2 = modulo;
-  let x2 = _0n3, y = _1n3, u = _1n3, v = _0n3;
+  let x = _0n3, y = _1n3, u = _1n3, v = _0n3;
   while (a !== _0n3) {
     const q = b2 / a;
     const r = b2 % a;
-    const m = x2 - u * q;
+    const m = x - u * q;
     const n2 = y - v * q;
-    b2 = a, a = r, x2 = u, y = v, u = m, v = n2;
+    b2 = a, a = r, x = u, y = v, u = m, v = n2;
   }
   const gcd = b2;
   if (gcd !== _1n3)
     throw new Error("invert: does not exist");
-  return mod(x2, modulo);
+  return mod(x, modulo);
 }
 function tonelliShanks(P) {
   const legendreC = (P - _1n3) / _2n3;
@@ -11367,7 +11367,7 @@ function tonelliShanks(P) {
       throw new Error("Cannot find square root");
     let r = S2;
     let g = Fp2.pow(Fp2.mul(Fp2.ONE, Z), Q);
-    let x2 = Fp2.pow(n2, Q1div2);
+    let x = Fp2.pow(n2, Q1div2);
     let b2 = Fp2.pow(n2, Q);
     while (!Fp2.eql(b2, Fp2.ONE)) {
       if (Fp2.eql(b2, Fp2.ZERO))
@@ -11380,11 +11380,11 @@ function tonelliShanks(P) {
       }
       const ge = Fp2.pow(g, _1n3 << BigInt(r - m - 1));
       g = Fp2.sqr(ge);
-      x2 = Fp2.mul(x2, ge);
+      x = Fp2.mul(x, ge);
       b2 = Fp2.mul(b2, g);
       r = m;
     }
-    return x2;
+    return x;
   };
 }
 function FpSqrt(P) {
@@ -11767,15 +11767,15 @@ function weierstrassPoints(opts) {
   });
   const fromBytes = CURVE.fromBytes || ((bytes2) => {
     const tail = bytes2.subarray(1);
-    const x2 = Fp2.fromBytes(tail.subarray(0, Fp2.BYTES));
+    const x = Fp2.fromBytes(tail.subarray(0, Fp2.BYTES));
     const y = Fp2.fromBytes(tail.subarray(Fp2.BYTES, 2 * Fp2.BYTES));
-    return { x: x2, y };
+    return { x, y };
   });
-  function weierstrassEquation(x2) {
+  function weierstrassEquation(x) {
     const { a, b: b2 } = CURVE;
-    const x22 = Fp2.sqr(x2);
-    const x3 = Fp2.mul(x22, x2);
-    return Fp2.add(Fp2.add(x3, Fp2.mul(x2, a)), b2);
+    const x2 = Fp2.sqr(x);
+    const x3 = Fp2.mul(x2, x);
+    return Fp2.add(Fp2.add(x3, Fp2.mul(x, a)), b2);
   }
   if (!Fp2.eql(Fp2.sqr(CURVE.Gy), weierstrassEquation(CURVE.Gx)))
     throw new Error("bad generator point: equation left != right");
@@ -11826,15 +11826,15 @@ function weierstrassPoints(opts) {
     // Does not validate if the point is on-curve.
     // Use fromHex instead, or call assertValidity() later.
     static fromAffine(p) {
-      const { x: x2, y } = p || {};
-      if (!p || !Fp2.isValid(x2) || !Fp2.isValid(y))
+      const { x, y } = p || {};
+      if (!p || !Fp2.isValid(x) || !Fp2.isValid(y))
         throw new Error("invalid affine point");
       if (p instanceof Point2)
         throw new Error("projective point not allowed");
       const is0 = (i) => Fp2.eql(i, Fp2.ZERO);
-      if (is0(x2) && is0(y))
+      if (is0(x) && is0(y))
         return Point2.ZERO;
-      return new Point2(x2, y, Fp2.ONE);
+      return new Point2(x, y, Fp2.ONE);
     }
     get x() {
       return this.toAffine().x;
@@ -11877,11 +11877,11 @@ function weierstrassPoints(opts) {
           return;
         throw new Error("bad point: ZERO");
       }
-      const { x: x2, y } = this.toAffine();
-      if (!Fp2.isValid(x2) || !Fp2.isValid(y))
+      const { x, y } = this.toAffine();
+      if (!Fp2.isValid(x) || !Fp2.isValid(y))
         throw new Error("bad point: x or y not FE");
       const left = Fp2.sqr(y);
-      const right = weierstrassEquation(x2);
+      const right = weierstrassEquation(x);
       if (!Fp2.eql(left, right))
         throw new Error("bad point: equation left != right");
       if (!this.isTorsionFree())
@@ -12098,11 +12098,11 @@ function weierstrassPoints(opts) {
     // Can accept precomputed Z^-1 - for example, from invertBatch.
     // (x, y, z) ∋ (x=x/z, y=y/z)
     toAffine(iz) {
-      const { px: x2, py: y, pz: z } = this;
+      const { px: x, py: y, pz: z } = this;
       const is0 = this.is0();
       if (iz == null)
         iz = is0 ? Fp2.ONE : Fp2.inv(z);
-      const ax = Fp2.mul(x2, iz);
+      const ax = Fp2.mul(x, iz);
       const ay = Fp2.mul(y, iz);
       const zz = Fp2.mul(z, iz);
       if (is0)
@@ -12178,12 +12178,12 @@ function weierstrass(curveDef) {
     ...CURVE,
     toBytes(_c, point, isCompressed) {
       const a = point.toAffine();
-      const x2 = Fp2.toBytes(a.x);
+      const x = Fp2.toBytes(a.x);
       const cat = concatBytes2;
       if (isCompressed) {
-        return cat(Uint8Array.from([point.hasEvenY() ? 2 : 3]), x2);
+        return cat(Uint8Array.from([point.hasEvenY() ? 2 : 3]), x);
       } else {
-        return cat(Uint8Array.from([4]), x2, Fp2.toBytes(a.y));
+        return cat(Uint8Array.from([4]), x, Fp2.toBytes(a.y));
       }
     },
     fromBytes(bytes2) {
@@ -12191,20 +12191,20 @@ function weierstrass(curveDef) {
       const head = bytes2[0];
       const tail = bytes2.subarray(1);
       if (len === compressedLen && (head === 2 || head === 3)) {
-        const x2 = bytesToNumberBE(tail);
-        if (!isValidFieldElement(x2))
+        const x = bytesToNumberBE(tail);
+        if (!isValidFieldElement(x))
           throw new Error("Point is not on curve");
-        const y2 = weierstrassEquation(x2);
+        const y2 = weierstrassEquation(x);
         let y = Fp2.sqrt(y2);
         const isYOdd = (y & _1n5) === _1n5;
         const isHeadOdd = (head & 1) === 1;
         if (isHeadOdd !== isYOdd)
           y = Fp2.neg(y);
-        return { x: x2, y };
+        return { x, y };
       } else if (len === uncompressedLen && head === 4) {
-        const x2 = Fp2.fromBytes(tail.subarray(0, Fp2.BYTES));
+        const x = Fp2.fromBytes(tail.subarray(0, Fp2.BYTES));
         const y = Fp2.fromBytes(tail.subarray(Fp2.BYTES, 2 * Fp2.BYTES));
-        return { x: x2, y };
+        return { x, y };
       } else {
         throw new Error(`Point of length ${len} was invalid. Expected ${compressedLen} compressed bytes or ${uncompressedLen} uncompressed bytes`);
       }
@@ -14408,8 +14408,8 @@ function decode_arithmetic(bytes2) {
     range = 1 + b2 - a;
   }
   let offset = symbol_count - 4;
-  return symbols.map((x2) => {
-    switch (x2 - offset) {
+  return symbols.map((x) => {
+    switch (x - offset) {
       case 3:
         return offset + 65792 + (bytes2[pos_payload++] << 16 | bytes2[pos_payload++] << 8 | bytes2[pos_payload++]);
       case 2:
@@ -14417,7 +14417,7 @@ function decode_arithmetic(bytes2) {
       case 1:
         return offset + bytes2[pos_payload++];
       default:
-        return x2 - 1;
+        return x - 1;
     }
   });
 }
@@ -14447,16 +14447,16 @@ function signed(i) {
 }
 function read_deltas(n2, next) {
   let v = Array(n2);
-  for (let i = 0, x2 = 0; i < n2; i++) v[i] = x2 += signed(next());
+  for (let i = 0, x = 0; i < n2; i++) v[i] = x += signed(next());
   return v;
 }
 function read_sorted(next, prev = 0) {
   let ret = [];
   while (true) {
-    let x2 = next();
+    let x = next();
     let n2 = next();
     if (!n2) break;
-    prev += x2;
+    prev += x;
     for (let i = 0; i < n2; i++) {
       ret.push(prev + i);
     }
@@ -14487,16 +14487,16 @@ function read_mapped(next) {
 function read_array_while(next) {
   let v = [];
   while (true) {
-    let x2 = next(v.length);
-    if (!x2) break;
-    v.push(x2);
+    let x = next(v.length);
+    if (!x) break;
+    v.push(x);
   }
   return v;
 }
 function read_transposed(n2, w, next) {
   let m = Array(n2).fill().map(() => []);
   for (let i = 0; i < w; i++) {
-    read_deltas(n2, next).forEach((x2, j) => m[j].push(x2));
+    read_deltas(n2, next).forEach((x, j) => m[j].push(x));
   }
   return m;
 }
@@ -14506,10 +14506,10 @@ function read_linear_table(w, next) {
   let vN = read_array_while(next);
   let m = read_transposed(vN.length, 1 + w, next);
   return m.flatMap((v, i) => {
-    let [x2, ...ys] = v;
+    let [x, ...ys] = v;
     return Array(vN[i]).fill().map((_, j) => {
       let j_dy = j * dy;
-      return [x2 + j * dx, ys.map((y) => y + j_dy)];
+      return [x + j * dx, ys.map((y) => y + j_dy)];
     });
   });
 }
@@ -14599,7 +14599,7 @@ var DECOMP;
 var RECOMP;
 function init$1() {
   let r = read_compressed_payload(COMPRESSED);
-  SHIFTED_RANK = new Map(read_sorted_arrays(r).flatMap((v, i) => v.map((x2) => [x2, i + 1 << 24])));
+  SHIFTED_RANK = new Map(read_sorted_arrays(r).flatMap((v, i) => v.map((x) => [x, i + 1 << 24])));
   EXCLUSIONS = new Set(read_sorted(r));
   DECOMP = /* @__PURE__ */ new Map();
   RECOMP = /* @__PURE__ */ new Map();
@@ -14745,7 +14745,7 @@ var HYPHEN = 45;
 var STOP_CH = ".";
 var FE0F = 65039;
 var UNIQUE_PH = 1;
-var Array_from = (x2) => Array.from(x2);
+var Array_from = (x) => Array.from(x);
 function group_has_cp(g, cp) {
   return g.P.has(cp) || g.Q.has(cp);
 }
@@ -14772,7 +14772,7 @@ function init() {
   let r = read_compressed_payload(COMPRESSED$1);
   const read_sorted_array = () => read_sorted(r);
   const read_sorted_set = () => new Set(read_sorted_array());
-  const set_add_many = (set, v) => v.forEach((x2) => set.add(x2));
+  const set_add_many = (set, v) => v.forEach((x) => set.add(x));
   MAPPED = new Map(read_mapped(r));
   IGNORED = read_sorted_set();
   CM = read_sorted_array();
@@ -14789,7 +14789,7 @@ function init() {
     return set;
   };
   GROUPS = read_array_while((i) => {
-    let N3 = read_array_while(r).map((x2) => x2 + 96);
+    let N3 = read_array_while(r).map((x) => x + 96);
     if (N3.length) {
       let R = i >= unrestricted;
       N3[0] -= 32;
@@ -14824,7 +14824,7 @@ function init() {
       rec.V.push(cp);
       set_add_many(rec.G, gs);
     }
-    let union = recs.flatMap((x2) => Array_from(x2.G));
+    let union = recs.flatMap((x) => Array_from(x.G));
     for (let { G, V: V2 } of recs) {
       let complement = new Set(union.filter((g) => !G.has(g)));
       for (let cp of V2) {
@@ -14864,8 +14864,8 @@ function init() {
         prev = next;
       }
     }
-    for (let x2 of prev) {
-      x2.V = cps;
+    for (let x of prev) {
+      x.V = cps;
     }
   }
 }
@@ -14962,7 +14962,7 @@ function split2(name, nf, ef) {
         check_label_extension(norm);
         type = "ASCII";
       } else {
-        let chars = tokens.flatMap((x2) => x2.is_emoji ? [] : x2);
+        let chars = tokens.flatMap((x) => x.is_emoji ? [] : x);
         if (!chars.length) {
           type = "Emoji";
         } else {
@@ -31045,7 +31045,7 @@ JSBI.__kMaxLength = 33554432, JSBI.__kMaxLengthBits = JSBI.__kMaxLength << 5, JS
 var jsbi_default = JSBI;
 
 // src/internalConstants.ts
-import { encodeSqrtRatioX96 } from "@uniswap/v3-sdk";
+import { encodeSqrtRatioX96 } from "@treeder/uniswap-v3-sdk";
 var ADDRESS_ZERO = ZeroAddress;
 var NEGATIVE_ONE = jsbi_default.BigInt(-1);
 var ZERO = jsbi_default.BigInt(0);
@@ -31828,11 +31828,11 @@ var Trade = class _Trade {
 // src/entities/position.ts
 import { Percent as Percent2, CurrencyAmount as CurrencyAmount4, MaxUint256 as MaxUint2562 } from "@uniswap/sdk-core";
 import invariant5 from "tiny-invariant";
-import { encodeSqrtRatioX96 as encodeSqrtRatioX963, maxLiquidityForAmounts, SqrtPriceMath, TickMath as TickMath3 } from "@uniswap/v3-sdk";
+import { encodeSqrtRatioX96 as encodeSqrtRatioX963, maxLiquidityForAmounts, SqrtPriceMath, TickMath as TickMath3 } from "@treeder/uniswap-v3-sdk";
 
 // src/utils/priceTickConversions.ts
 import { Price as Price4 } from "@uniswap/sdk-core";
-import { TickMath as TickMath2, encodeSqrtRatioX96 as encodeSqrtRatioX962 } from "@uniswap/v3-sdk";
+import { TickMath as TickMath2, encodeSqrtRatioX96 as encodeSqrtRatioX962 } from "@treeder/uniswap-v3-sdk";
 function tickToPrice(baseCurrency, quoteCurrency, tick) {
   const sqrtRatioX96 = TickMath2.getSqrtRatioAtTick(tick);
   const ratioX192 = jsbi_default.multiply(sqrtRatioX96, sqrtRatioX96);
@@ -34422,11 +34422,11 @@ function getChecksumAddress2(address) {
   return "0x" + chars.join("");
 }
 var MAX_SAFE_INTEGER = 9007199254740991;
-function log10(x2) {
+function log10(x) {
   if (Math.log10) {
-    return Math.log10(x2);
+    return Math.log10(x);
   }
-  return Math.log(x2) / Math.LN10;
+  return Math.log(x) / Math.LN10;
 }
 var ibanLookup2 = {};
 for (let i = 0; i < 10; i++) {
@@ -37393,10 +37393,6 @@ var V4PositionManager = class _V4PositionManager {
     };
   }
 };
-
-// src/index.ts
-var x = 100;
-console.log(x);
 export {
   Actions,
   DYNAMIC_FEE_FLAG,
