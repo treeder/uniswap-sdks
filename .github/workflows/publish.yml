@@ -25,6 +25,7 @@ jobs:
           git config --global user.name "Actions"
           npm version patch
           git push --follow-tags
+      # todo: need to update subdirectory package.json versions before publishing
       - name: Publish v3
         run: |
           pwd
