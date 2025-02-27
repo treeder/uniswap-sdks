@@ -20,7 +20,7 @@ jobs:
           # scope: '@octocat'
       - name: Build
         run: |
-          coreback enable
+          corepack enable
           npx turbo run build
       - run: |
           pwd
