@@ -24,12 +24,12 @@ jobs:
           # echo "//npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN" > ~/.npmrc
           yarn
           npx turbo run build
-      - name: Bump version npm style
-        run: |
-          git config --global user.email "github+actions@gmail.com"
-          git config --global user.name "Actions"
-          npm version patch
-          git push --follow-tags
+      # - name: Bump version npm style
+      #   run: |
+      #     git config --global user.email "github+actions@gmail.com"
+      #     git config --global user.name "Actions"
+      #     npm version patch
+      #     git push --follow-tags
       - run: |
           pwd
           echo "//npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN" > ~/.npmrc
