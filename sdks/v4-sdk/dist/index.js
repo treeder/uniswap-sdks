@@ -3341,7 +3341,7 @@ var require_websocket_server = __commonJS({
         socket.on("error", socketOnError);
         const key = req.headers["sec-websocket-key"];
         const upgrade = req.headers.upgrade;
-        const version10 = +req.headers["sec-websocket-version"];
+        const version9 = +req.headers["sec-websocket-version"];
         if (req.method !== "GET") {
           const message = "Invalid HTTP method";
           abortHandshakeOrEmitwsClientError(this, req, socket, 405, message);
@@ -3357,7 +3357,7 @@ var require_websocket_server = __commonJS({
           abortHandshakeOrEmitwsClientError(this, req, socket, 400, message);
           return;
         }
-        if (version10 !== 8 && version10 !== 13) {
+        if (version9 !== 8 && version9 !== 13) {
           const message = "Missing or invalid Sec-WebSocket-Version header";
           abortHandshakeOrEmitwsClientError(this, req, socket, 400, message);
           return;
@@ -3399,7 +3399,7 @@ var require_websocket_server = __commonJS({
         }
         if (this.options.verifyClient) {
           const info = {
-            origin: req.headers[`${version10 === 8 ? "sec-websocket-origin" : "origin"}`],
+            origin: req.headers[`${version9 === 8 ? "sec-websocket-origin" : "origin"}`],
             secure: !!(req.socket.authorized || req.socket.encrypted),
             req
           };
@@ -15245,8 +15245,8 @@ var BN_282 = BigInt(28);
 var BN_352 = BigInt(35);
 var BN_MAX_UINT = BigInt("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
 var BLOB_SIZE = 4096 * 32;
-function getVersionedHash(version10, hash2) {
-  let versioned = version10.toString(16);
+function getVersionedHash(version9, hash2) {
+  let versioned = version9.toString(16);
   while (versioned.length < 2) {
     versioned = "0" + versioned;
   }
@@ -28605,8 +28605,8 @@ var defaultPath = "m/44'/60'/0'/0/0";
 function isKeystoreJson(json) {
   try {
     const data4 = JSON.parse(json);
-    const version10 = data4.version != null ? parseInt(data4.version) : 0;
-    if (version10 === 3) {
+    const version9 = data4.version != null ? parseInt(data4.version) : 0;
+    if (version9 === 3) {
       return true;
     }
   } catch (error) {
@@ -28639,8 +28639,8 @@ function getAccount(data4, _key) {
     assertArgument(getAddress(check) === address, "keystore address/privateKey mismatch", "address", data4.address);
   }
   const account = { address, privateKey };
-  const version10 = spelunk(data4, "x-ethers.version:string");
-  if (version10 === "0.1") {
+  const version9 = spelunk(data4, "x-ethers.version:string");
+  if (version9 === "0.1") {
     const mnemonicKey = key.slice(32, 64);
     const mnemonicCiphertext = spelunk(data4, "x-ethers.mnemonicCiphertext:data!");
     const mnemonicIv = spelunk(data4, "x-ethers.mnemonicCounter:data!");
@@ -30017,7 +30017,7 @@ var Hook = class _Hook {
 // ../../node_modules/jsbi/dist/jsbi.mjs
 var JSBI = class _JSBI extends Array {
   constructor(i, _) {
-    if (super(i), this.sign = _, i > _JSBI.__kMaxLength) throw new RangeError("Maximum BigInt size exceeded");
+    if (super(i), this.sign = _, Object.setPrototypeOf(this, _JSBI.prototype), i > _JSBI.__kMaxLength) throw new RangeError("Maximum BigInt size exceeded");
   }
   static BigInt(i) {
     var _ = Math.floor, t = Number.isFinite;
@@ -30049,6 +30049,9 @@ var JSBI = class _JSBI extends Array {
     if (2 > i || 36 < i) throw new RangeError("toString() radix argument must be between 2 and 36");
     return 0 === this.length ? "0" : 0 == (i & i - 1) ? _JSBI.__toStringBasePowerOfTwo(this, i) : _JSBI.__toStringGeneric(this, i, false);
   }
+  valueOf() {
+    throw new Error("Convert JSBI instances to native numbers using `toNumber`.");
+  }
   static toNumber(i) {
     const _ = i.length;
     if (0 === _) return 0;
@@ -30058,14 +30061,14 @@ var JSBI = class _JSBI extends Array {
     }
     const t = i.__digit(_ - 1), e = _JSBI.__clz30(t), n2 = 30 * _ - e;
     if (1024 < n2) return i.sign ? -Infinity : 1 / 0;
-    let g = n2 - 1, o = t, s = _ - 1;
+    let g = n2 - 1, s = t, o = _ - 1;
     const l = e + 3;
-    let r = 32 === l ? 0 : o << l;
+    let r = 32 === l ? 0 : s << l;
     r >>>= 12;
     const a = l - 12;
-    let u = 12 <= l ? 0 : o << 20 + l, d = 20 + l;
-    for (0 < a && 0 < s && (s--, o = i.__digit(s), r |= o >>> 30 - a, u = o << a + 2, d = a + 2); 0 < d && 0 < s; ) s--, o = i.__digit(s), u |= 30 <= d ? o << d - 30 : o >>> 30 - d, d -= 30;
-    const h = _JSBI.__decideRounding(i, d, s, o);
+    let u = 12 <= l ? 0 : s << 20 + l, d = 20 + l;
+    for (0 < a && 0 < o && (o--, s = i.__digit(o), r |= s >>> 30 - a, u = s << a + 2, d = a + 2); 0 < d && 0 < o; ) o--, s = i.__digit(o), u |= 30 <= d ? s << d - 30 : s >>> 30 - d, d -= 30;
+    const h = _JSBI.__decideRounding(i, d, o, s);
     if ((1 === h || 0 === h && 1 == (1 & u)) && (u = u + 1 >>> 0, 0 === u && (r++, 0 != r >>> 20 && (r = 0, g++, 1023 < g)))) return i.sign ? -Infinity : 1 / 0;
     const m = i.sign ? -2147483648 : 0;
     return g = g + 1023 << 20, _JSBI.__kBitConversionInts[1] = m | g | r, _JSBI.__kBitConversionInts[0] = u, _JSBI.__kBitConversionDouble[0];
@@ -30212,13 +30215,13 @@ var JSBI = class _JSBI extends Array {
     if (_ >= _JSBI.__kMaxLengthBits) return t;
     const e = 0 | (_ + 29) / 30;
     if (t.length < e) return t;
-    const g = t.__unsignedDigit(e - 1), o = 1 << (_ - 1) % 30;
-    if (t.length === e && g < o) return t;
-    if (!((g & o) === o)) return _JSBI.__truncateToNBits(_, t);
+    const g = t.__unsignedDigit(e - 1), s = 1 << (_ - 1) % 30;
+    if (t.length === e && g < s) return t;
+    if (!((g & s) === s)) return _JSBI.__truncateToNBits(_, t);
     if (!t.sign) return _JSBI.__truncateAndSubFromPowerOfTwo(_, t, true);
-    if (0 == (g & o - 1)) {
+    if (0 == (g & s - 1)) {
       for (let n2 = e - 2; 0 <= n2; n2--) if (0 !== t.__digit(n2)) return _JSBI.__truncateAndSubFromPowerOfTwo(_, t, false);
-      return t.length === e && g === o ? t : _JSBI.__truncateToNBits(_, t);
+      return t.length === e && g === s ? t : _JSBI.__truncateToNBits(_, t);
     }
     return _JSBI.__truncateAndSubFromPowerOfTwo(_, t, false);
   }
@@ -30289,6 +30292,26 @@ var JSBI = class _JSBI extends Array {
   static NE(i, _) {
     return !_JSBI.EQ(i, _);
   }
+  static DataViewGetBigInt64(i, _, t = false) {
+    return _JSBI.asIntN(64, _JSBI.DataViewGetBigUint64(i, _, t));
+  }
+  static DataViewGetBigUint64(i, _, t = false) {
+    const [e, n2] = t ? [4, 0] : [0, 4], g = i.getUint32(_ + e, t), s = i.getUint32(_ + n2, t), o = new _JSBI(3, false);
+    return o.__setDigit(0, 1073741823 & s), o.__setDigit(1, (268435455 & g) << 2 | s >>> 30), o.__setDigit(2, g >>> 28), o.__trim();
+  }
+  static DataViewSetBigInt64(i, _, t, e = false) {
+    _JSBI.DataViewSetBigUint64(i, _, t, e);
+  }
+  static DataViewSetBigUint64(i, _, t, e = false) {
+    t = _JSBI.asUintN(64, t);
+    let n2 = 0, g = 0;
+    if (0 < t.length && (g = t.__digit(0), 1 < t.length)) {
+      const i2 = t.__digit(1);
+      g |= i2 << 30, n2 = i2 >>> 2, 2 < t.length && (n2 |= t.__digit(2) << 28);
+    }
+    const [s, o] = e ? [4, 0] : [0, 4];
+    i.setUint32(_ + s, n2, e), i.setUint32(_ + o, g, e);
+  }
   static __zero() {
     return new _JSBI(0, false);
   }
@@ -30326,19 +30349,19 @@ var JSBI = class _JSBI extends Array {
   static __fromDouble(i) {
     _JSBI.__kBitConversionDouble[0] = i;
     const _ = 2047 & _JSBI.__kBitConversionInts[1] >>> 20, t = _ - 1023, e = (0 | t / 30) + 1, n2 = new _JSBI(e, 0 > i);
-    let g = 1048575 & _JSBI.__kBitConversionInts[1] | 1048576, o = _JSBI.__kBitConversionInts[0];
-    const s = 20, l = t % 30;
+    let g = 1048575 & _JSBI.__kBitConversionInts[1] | 1048576, s = _JSBI.__kBitConversionInts[0];
+    const o = 20, l = t % 30;
     let r, a = 0;
     if (l < 20) {
-      const i2 = s - l;
-      a = i2 + 32, r = g >>> i2, g = g << 32 - i2 | o >>> i2, o <<= 32 - i2;
-    } else if (l === 20) a = 32, r = g, g = o, o = 0;
+      const i2 = o - l;
+      a = i2 + 32, r = g >>> i2, g = g << 32 - i2 | s >>> i2, s <<= 32 - i2;
+    } else if (l === 20) a = 32, r = g, g = s, s = 0;
     else {
-      const i2 = l - s;
-      a = 32 - i2, r = g << i2 | o >>> 32 - i2, g = o << i2, o = 0;
+      const i2 = l - o;
+      a = 32 - i2, r = g << i2 | s >>> 32 - i2, g = s << i2, s = 0;
     }
     n2.__setDigit(e - 1, r);
-    for (let _2 = e - 2; 0 <= _2; _2--) 0 < a ? (a -= 30, r = g >>> 2, g = g << 30 | o >>> 2, o <<= 30) : r = 0, n2.__setDigit(_2, r);
+    for (let _2 = e - 2; 0 <= _2; _2--) 0 < a ? (a -= 30, r = g >>> 2, g = g << 30 | s >>> 2, s <<= 30) : r = 0, n2.__setDigit(_2, r);
     return n2.__trim();
   }
   static __isWhitespace(i) {
@@ -30387,14 +30410,14 @@ var JSBI = class _JSBI extends Array {
       if (++n2 === e) return _JSBI.__zero();
       g = i.charCodeAt(n2);
     }
-    const o = e - n2;
-    let s = _JSBI.__kMaxBitsPerChar[_], l = _JSBI.__kBitsPerCharTableMultiplier - 1;
-    if (o > 1073741824 / s) return null;
-    const r = s * o + l >>> _JSBI.__kBitsPerCharTableShift, a = new _JSBI(0 | (r + 29) / 30, false), u = 10 > _ ? _ : 10, h = 10 < _ ? _ - 10 : 0;
+    const s = e - n2;
+    let o = _JSBI.__kMaxBitsPerChar[_], l = _JSBI.__kBitsPerCharTableMultiplier - 1;
+    if (s > 1073741824 / o) return null;
+    const r = o * s + l >>> _JSBI.__kBitsPerCharTableShift, a = new _JSBI(0 | (r + 29) / 30, false), u = 10 > _ ? _ : 10, h = 10 < _ ? _ - 10 : 0;
     if (0 == (_ & _ - 1)) {
-      s >>= _JSBI.__kBitsPerCharTableShift;
+      o >>= _JSBI.__kBitsPerCharTableShift;
       const _2 = [], t2 = [];
-      let o2 = false;
+      let s2 = false;
       do {
         let l2 = 0, r2 = 0;
         for (; ; ) {
@@ -30402,41 +30425,41 @@ var JSBI = class _JSBI extends Array {
           if (g - 48 >>> 0 < u) _3 = g - 48;
           else if ((32 | g) - 97 >>> 0 < h) _3 = (32 | g) - 87;
           else {
-            o2 = true;
+            s2 = true;
             break;
           }
-          if (r2 += s, l2 = l2 << s | _3, ++n2 === e) {
-            o2 = true;
+          if (r2 += o, l2 = l2 << o | _3, ++n2 === e) {
+            s2 = true;
             break;
           }
-          if (g = i.charCodeAt(n2), 30 < r2 + s) break;
+          if (g = i.charCodeAt(n2), 30 < r2 + o) break;
         }
         _2.push(l2), t2.push(r2);
-      } while (!o2);
+      } while (!s2);
       _JSBI.__fillFromParts(a, _2, t2);
     } else {
       a.__initializeDigits();
-      let t2 = false, o2 = 0;
+      let t2 = false, s2 = 0;
       do {
         let r2 = 0, b2 = 1;
         for (; ; ) {
-          let s2;
-          if (g - 48 >>> 0 < u) s2 = g - 48;
-          else if ((32 | g) - 97 >>> 0 < h) s2 = (32 | g) - 87;
+          let o2;
+          if (g - 48 >>> 0 < u) o2 = g - 48;
+          else if ((32 | g) - 97 >>> 0 < h) o2 = (32 | g) - 87;
           else {
             t2 = true;
             break;
           }
           const l2 = b2 * _;
           if (1073741823 < l2) break;
-          if (b2 = l2, r2 = r2 * _ + s2, o2++, ++n2 === e) {
+          if (b2 = l2, r2 = r2 * _ + o2, s2++, ++n2 === e) {
             t2 = true;
             break;
           }
           g = i.charCodeAt(n2);
         }
         l = 30 * _JSBI.__kBitsPerCharTableMultiplier - 1;
-        const D = 0 | (s * o2 + l >>> _JSBI.__kBitsPerCharTableShift) / 30;
+        const D = 0 | (o * s2 + l >>> _JSBI.__kBitsPerCharTableShift) / 30;
         a.__inplaceMultiplyAdd(b2, r2, D);
       } while (!t2);
     }
@@ -30447,10 +30470,10 @@ var JSBI = class _JSBI extends Array {
     return a.sign = -1 == t, a.__trim();
   }
   static __fillFromParts(_, t, e) {
-    let n2 = 0, g = 0, o = 0;
-    for (let s = t.length - 1; 0 <= s; s--) {
-      const i = t[s], l = e[s];
-      g |= i << o, o += l, 30 === o ? (_.__setDigit(n2++, g), o = 0, g = 0) : 30 < o && (_.__setDigit(n2++, 1073741823 & g), o -= 30, g = i >>> l - o);
+    let n2 = 0, g = 0, s = 0;
+    for (let o = t.length - 1; 0 <= o; o--) {
+      const i = t[o], l = e[o];
+      g |= i << s, s += l, 30 === s ? (_.__setDigit(n2++, g), s = 0, g = 0) : 30 < s && (_.__setDigit(n2++, 1073741823 & g), s -= 30, g = i >>> l - s);
     }
     if (0 !== g) {
       if (n2 >= _.length) throw new Error("implementation bug");
@@ -30462,19 +30485,19 @@ var JSBI = class _JSBI extends Array {
     const t = _.length;
     let e = i - 1;
     e = (85 & e >>> 1) + (85 & e), e = (51 & e >>> 2) + (51 & e), e = (15 & e >>> 4) + (15 & e);
-    const n2 = e, g = i - 1, o = _.__digit(t - 1), s = _JSBI.__clz30(o);
-    let l = 0 | (30 * t - s + n2 - 1) / n2;
+    const n2 = e, g = i - 1, s = _.__digit(t - 1), o = _JSBI.__clz30(s);
+    let l = 0 | (30 * t - o + n2 - 1) / n2;
     if (_.sign && l++, 268435456 < l) throw new Error("string too long");
     const r = Array(l);
     let a = l - 1, u = 0, d = 0;
     for (let e2 = 0; e2 < t - 1; e2++) {
       const i2 = _.__digit(e2), t2 = (u | i2 << d) & g;
       r[a--] = _JSBI.__kConversionChars[t2];
-      const o2 = n2 - d;
-      for (u = i2 >>> o2, d = 30 - o2; d >= n2; ) r[a--] = _JSBI.__kConversionChars[u & g], u >>>= n2, d -= n2;
+      const s2 = n2 - d;
+      for (u = i2 >>> s2, d = 30 - s2; d >= n2; ) r[a--] = _JSBI.__kConversionChars[u & g], u >>>= n2, d -= n2;
     }
-    const h = (u | o << d) & g;
-    for (r[a--] = _JSBI.__kConversionChars[h], u = o >>> n2 - d; 0 !== u; ) r[a--] = _JSBI.__kConversionChars[u & g], u >>>= n2;
+    const h = (u | s << d) & g;
+    for (r[a--] = _JSBI.__kConversionChars[h], u = s >>> n2 - d; 0 !== u; ) r[a--] = _JSBI.__kConversionChars[u & g], u >>>= n2;
     if (_.sign && (r[a--] = "-"), -1 != a) throw new Error("implementation bug");
     return r.join("");
   }
@@ -30485,10 +30508,10 @@ var JSBI = class _JSBI extends Array {
       let e2 = _.__unsignedDigit(0).toString(i);
       return false === t && _.sign && (e2 = "-" + e2), e2;
     }
-    const n2 = 30 * e - _JSBI.__clz30(_.__digit(e - 1)), g = _JSBI.__kMaxBitsPerChar[i], o = g - 1;
-    let s = n2 * _JSBI.__kBitsPerCharTableMultiplier;
-    s += o - 1, s = 0 | s / o;
-    const l = s + 1 >> 1, r = _JSBI.exponentiate(_JSBI.__oneDigit(i, false), _JSBI.__oneDigit(l, false));
+    const n2 = 30 * e - _JSBI.__clz30(_.__digit(e - 1)), g = _JSBI.__kMaxBitsPerChar[i], s = g - 1;
+    let o = n2 * _JSBI.__kBitsPerCharTableMultiplier;
+    o += s - 1, o = 0 | o / s;
+    const l = o + 1 >> 1, r = _JSBI.exponentiate(_JSBI.__oneDigit(i, false), _JSBI.__oneDigit(l, false));
     let a, u;
     const d = r.__unsignedDigit(0);
     if (1 === r.length && 32767 >= d) {
@@ -30553,12 +30576,12 @@ var JSBI = class _JSBI extends Array {
     const n2 = e - 1023;
     if (0 > n2) return _JSBI.__absoluteGreater(t);
     const g = i.length;
-    let o = i.__digit(g - 1);
-    const s = _JSBI.__clz30(o), l = 30 * g - s, r = n2 + 1;
+    let s = i.__digit(g - 1);
+    const o = _JSBI.__clz30(s), l = 30 * g - o, r = n2 + 1;
     if (l < r) return _JSBI.__absoluteLess(t);
     if (l > r) return _JSBI.__absoluteGreater(t);
     let a = 1048576 | 1048575 & _JSBI.__kBitConversionInts[1], u = _JSBI.__kBitConversionInts[0];
-    const d = 20, h = 29 - s;
+    const d = 20, h = 29 - o;
     if (h !== (0 | (l - 1) % 30)) throw new Error("implementation bug");
     let m, b2 = 0;
     if (20 > h) {
@@ -30569,8 +30592,8 @@ var JSBI = class _JSBI extends Array {
       const i2 = h - d;
       b2 = 32 - i2, m = a << i2 | u >>> 32 - i2, a = u << i2, u = 0;
     }
-    if (o >>>= 0, m >>>= 0, o > m) return _JSBI.__absoluteGreater(t);
-    if (o < m) return _JSBI.__absoluteLess(t);
+    if (s >>>= 0, m >>>= 0, s > m) return _JSBI.__absoluteGreater(t);
+    if (s < m) return _JSBI.__absoluteLess(t);
     for (let e2 = g - 2; 0 <= e2; e2--) {
       0 < b2 ? (b2 -= 30, m = a >>> 2, a = a << 30 | u >>> 2, u <<= 30) : m = 0;
       const _2 = i.__unsignedDigit(e2);
@@ -30623,29 +30646,29 @@ var JSBI = class _JSBI extends Array {
     let n2 = _.length;
     (0 === _.__clzmsd() || t.length === _.length && 0 === t.__clzmsd()) && n2++;
     const g = new _JSBI(n2, e);
-    let o = 0, s = 0;
-    for (; s < t.length; s++) {
-      const i = _.__digit(s) + t.__digit(s) + o;
-      o = i >>> 30, g.__setDigit(s, 1073741823 & i);
+    let s = 0, o = 0;
+    for (; o < t.length; o++) {
+      const i = _.__digit(o) + t.__digit(o) + s;
+      s = i >>> 30, g.__setDigit(o, 1073741823 & i);
     }
-    for (; s < _.length; s++) {
-      const i = _.__digit(s) + o;
-      o = i >>> 30, g.__setDigit(s, 1073741823 & i);
+    for (; o < _.length; o++) {
+      const i = _.__digit(o) + s;
+      s = i >>> 30, g.__setDigit(o, 1073741823 & i);
     }
-    return s < g.length && g.__setDigit(s, o), g.__trim();
+    return o < g.length && g.__setDigit(o, s), g.__trim();
   }
   static __absoluteSub(_, t, e) {
     if (0 === _.length) return _;
     if (0 === t.length) return _.sign === e ? _ : _JSBI.unaryMinus(_);
     const n2 = new _JSBI(_.length, e);
-    let g = 0, o = 0;
-    for (; o < t.length; o++) {
-      const i = _.__digit(o) - t.__digit(o) - g;
-      g = 1 & i >>> 30, n2.__setDigit(o, 1073741823 & i);
+    let g = 0, s = 0;
+    for (; s < t.length; s++) {
+      const i = _.__digit(s) - t.__digit(s) - g;
+      g = 1 & i >>> 30, n2.__setDigit(s, 1073741823 & i);
     }
-    for (; o < _.length; o++) {
-      const i = _.__digit(o) - g;
-      g = 1 & i >>> 30, n2.__setDigit(o, 1073741823 & i);
+    for (; s < _.length; s++) {
+      const i = _.__digit(s) - g;
+      g = 1 & i >>> 30, n2.__setDigit(s, 1073741823 & i);
     }
     return n2.__trim();
   }
@@ -30664,68 +30687,68 @@ var JSBI = class _JSBI extends Array {
     t = t || e;
     const n2 = new _JSBI(t, false);
     let g = 1;
-    for (let o = 0; o < e; o++) {
-      const i = _.__digit(o) - g;
-      g = 1 & i >>> 30, n2.__setDigit(o, 1073741823 & i);
+    for (let s = 0; s < e; s++) {
+      const i = _.__digit(s) - g;
+      g = 1 & i >>> 30, n2.__setDigit(s, 1073741823 & i);
     }
     if (0 != g) throw new Error("implementation bug");
     for (let g2 = e; g2 < t; g2++) n2.__setDigit(g2, 0);
     return n2;
   }
   static __absoluteAnd(_, t, e = null) {
-    let n2 = _.length, g = t.length, o = g;
+    let n2 = _.length, g = t.length, s = g;
     if (n2 < g) {
-      o = n2;
+      s = n2;
       const i = _, e2 = n2;
       _ = t, n2 = g, t = i, g = e2;
     }
-    let s = o;
-    null === e ? e = new _JSBI(s, false) : s = e.length;
+    let o = s;
+    null === e ? e = new _JSBI(o, false) : o = e.length;
     let l = 0;
-    for (; l < o; l++) e.__setDigit(l, _.__digit(l) & t.__digit(l));
-    for (; l < s; l++) e.__setDigit(l, 0);
+    for (; l < s; l++) e.__setDigit(l, _.__digit(l) & t.__digit(l));
+    for (; l < o; l++) e.__setDigit(l, 0);
     return e;
   }
   static __absoluteAndNot(_, t, e = null) {
     const n2 = _.length, g = t.length;
-    let o = g;
-    n2 < g && (o = n2);
-    let s = n2;
-    null === e ? e = new _JSBI(s, false) : s = e.length;
+    let s = g;
+    n2 < g && (s = n2);
+    let o = n2;
+    null === e ? e = new _JSBI(o, false) : o = e.length;
     let l = 0;
-    for (; l < o; l++) e.__setDigit(l, _.__digit(l) & ~t.__digit(l));
+    for (; l < s; l++) e.__setDigit(l, _.__digit(l) & ~t.__digit(l));
     for (; l < n2; l++) e.__setDigit(l, _.__digit(l));
-    for (; l < s; l++) e.__setDigit(l, 0);
+    for (; l < o; l++) e.__setDigit(l, 0);
     return e;
   }
   static __absoluteOr(_, t, e = null) {
-    let n2 = _.length, g = t.length, o = g;
+    let n2 = _.length, g = t.length, s = g;
     if (n2 < g) {
-      o = n2;
+      s = n2;
       const i = _, e2 = n2;
       _ = t, n2 = g, t = i, g = e2;
     }
-    let s = n2;
-    null === e ? e = new _JSBI(s, false) : s = e.length;
+    let o = n2;
+    null === e ? e = new _JSBI(o, false) : o = e.length;
     let l = 0;
-    for (; l < o; l++) e.__setDigit(l, _.__digit(l) | t.__digit(l));
+    for (; l < s; l++) e.__setDigit(l, _.__digit(l) | t.__digit(l));
     for (; l < n2; l++) e.__setDigit(l, _.__digit(l));
-    for (; l < s; l++) e.__setDigit(l, 0);
+    for (; l < o; l++) e.__setDigit(l, 0);
     return e;
   }
   static __absoluteXor(_, t, e = null) {
-    let n2 = _.length, g = t.length, o = g;
+    let n2 = _.length, g = t.length, s = g;
     if (n2 < g) {
-      o = n2;
+      s = n2;
       const i = _, e2 = n2;
       _ = t, n2 = g, t = i, g = e2;
     }
-    let s = n2;
-    null === e ? e = new _JSBI(s, false) : s = e.length;
+    let o = n2;
+    null === e ? e = new _JSBI(o, false) : o = e.length;
     let l = 0;
-    for (; l < o; l++) e.__setDigit(l, _.__digit(l) ^ t.__digit(l));
+    for (; l < s; l++) e.__setDigit(l, _.__digit(l) ^ t.__digit(l));
     for (; l < n2; l++) e.__setDigit(l, _.__digit(l));
-    for (; l < s; l++) e.__setDigit(l, 0);
+    for (; l < o; l++) e.__setDigit(l, 0);
     return e;
   }
   static __absoluteCompare(_, t) {
@@ -30737,47 +30760,47 @@ var JSBI = class _JSBI extends Array {
   }
   static __multiplyAccumulate(_, t, e, n2) {
     if (0 === t) return;
-    const g = 32767 & t, o = t >>> 15;
-    let s = 0, l = 0;
+    const g = 32767 & t, s = t >>> 15;
+    let o = 0, l = 0;
     for (let r, a = 0; a < _.length; a++, n2++) {
       r = e.__digit(n2);
-      const i = _.__digit(a), t2 = 32767 & i, u = i >>> 15, d = _JSBI.__imul(t2, g), h = _JSBI.__imul(t2, o), m = _JSBI.__imul(u, g), b2 = _JSBI.__imul(u, o);
-      r += l + d + s, s = r >>> 30, r &= 1073741823, r += ((32767 & h) << 15) + ((32767 & m) << 15), s += r >>> 30, l = b2 + (h >>> 15) + (m >>> 15), e.__setDigit(n2, 1073741823 & r);
+      const i = _.__digit(a), t2 = 32767 & i, u = i >>> 15, d = _JSBI.__imul(t2, g), h = _JSBI.__imul(t2, s), m = _JSBI.__imul(u, g), b2 = _JSBI.__imul(u, s);
+      r += l + d + o, o = r >>> 30, r &= 1073741823, r += ((32767 & h) << 15) + ((32767 & m) << 15), o += r >>> 30, l = b2 + (h >>> 15) + (m >>> 15), e.__setDigit(n2, 1073741823 & r);
     }
-    for (; 0 != s || 0 !== l; n2++) {
+    for (; 0 != o || 0 !== l; n2++) {
       let i = e.__digit(n2);
-      i += s + l, l = 0, s = i >>> 30, e.__setDigit(n2, 1073741823 & i);
+      i += o + l, l = 0, o = i >>> 30, e.__setDigit(n2, 1073741823 & i);
     }
   }
-  static __internalMultiplyAdd(_, t, e, g, o) {
-    let s = e, l = 0;
+  static __internalMultiplyAdd(_, t, e, g, s) {
+    let o = e, l = 0;
     for (let n2 = 0; n2 < g; n2++) {
-      const i = _.__digit(n2), e2 = _JSBI.__imul(32767 & i, t), g2 = _JSBI.__imul(i >>> 15, t), a = e2 + ((32767 & g2) << 15) + l + s;
-      s = a >>> 30, l = g2 >>> 15, o.__setDigit(n2, 1073741823 & a);
+      const i = _.__digit(n2), e2 = _JSBI.__imul(32767 & i, t), g2 = _JSBI.__imul(i >>> 15, t), a = e2 + ((32767 & g2) << 15) + l + o;
+      o = a >>> 30, l = g2 >>> 15, s.__setDigit(n2, 1073741823 & a);
     }
-    if (o.length > g) for (o.__setDigit(g++, s + l); g < o.length; ) o.__setDigit(g++, 0);
-    else if (0 !== s + l) throw new Error("implementation bug");
+    if (s.length > g) for (s.__setDigit(g++, o + l); g < s.length; ) s.__setDigit(g++, 0);
+    else if (0 !== o + l) throw new Error("implementation bug");
   }
   __inplaceMultiplyAdd(i, _, t) {
     t > this.length && (t = this.length);
     const e = 32767 & i, n2 = i >>> 15;
-    let g = 0, o = _;
-    for (let s = 0; s < t; s++) {
-      const i2 = this.__digit(s), _2 = 32767 & i2, t2 = i2 >>> 15, l = _JSBI.__imul(_2, e), r = _JSBI.__imul(_2, n2), a = _JSBI.__imul(t2, e), u = _JSBI.__imul(t2, n2);
-      let d = o + l + g;
-      g = d >>> 30, d &= 1073741823, d += ((32767 & r) << 15) + ((32767 & a) << 15), g += d >>> 30, o = u + (r >>> 15) + (a >>> 15), this.__setDigit(s, 1073741823 & d);
+    let g = 0, s = _;
+    for (let o = 0; o < t; o++) {
+      const i2 = this.__digit(o), _2 = 32767 & i2, t2 = i2 >>> 15, l = _JSBI.__imul(_2, e), r = _JSBI.__imul(_2, n2), a = _JSBI.__imul(t2, e), u = _JSBI.__imul(t2, n2);
+      let d = s + l + g;
+      g = d >>> 30, d &= 1073741823, d += ((32767 & r) << 15) + ((32767 & a) << 15), g += d >>> 30, s = u + (r >>> 15) + (a >>> 15), this.__setDigit(o, 1073741823 & d);
     }
-    if (0 != g || 0 !== o) throw new Error("implementation bug");
+    if (0 != g || 0 !== s) throw new Error("implementation bug");
   }
   static __absoluteDivSmall(_, t, e = null) {
     null === e && (e = new _JSBI(_.length, false));
     let n2 = 0;
-    for (let g, o = 2 * _.length - 1; 0 <= o; o -= 2) {
-      g = (n2 << 15 | _.__halfDigit(o)) >>> 0;
+    for (let g, s = 2 * _.length - 1; 0 <= s; s -= 2) {
+      g = (n2 << 15 | _.__halfDigit(s)) >>> 0;
       const i = 0 | g / t;
-      n2 = 0 | g % t, g = (n2 << 15 | _.__halfDigit(o - 1)) >>> 0;
-      const s = 0 | g / t;
-      n2 = 0 | g % t, e.__setDigit(o >>> 1, i << 15 | s);
+      n2 = 0 | g % t, g = (n2 << 15 | _.__halfDigit(s - 1)) >>> 0;
+      const o = 0 | g / t;
+      n2 = 0 | g % t, e.__setDigit(s >>> 1, i << 15 | o);
     }
     return e;
   }
@@ -30790,31 +30813,31 @@ var JSBI = class _JSBI extends Array {
     return e;
   }
   static __absoluteDivLarge(i, _, t, e) {
-    const g = _.__halfDigitLength(), n2 = _.length, o = i.__halfDigitLength() - g;
-    let s = null;
-    t && (s = new _JSBI(o + 2 >>> 1, false), s.__initializeDigits());
+    const g = _.__halfDigitLength(), n2 = _.length, s = i.__halfDigitLength() - g;
+    let o = null;
+    t && (o = new _JSBI(s + 2 >>> 1, false), o.__initializeDigits());
     const l = new _JSBI(g + 2 >>> 1, false);
     l.__initializeDigits();
     const r = _JSBI.__clz15(_.__halfDigit(g - 1));
     0 < r && (_ = _JSBI.__specialLeftShift(_, r, 0));
     const a = _JSBI.__specialLeftShift(i, r, 1), u = _.__halfDigit(g - 1);
     let d = 0;
-    for (let r2, h = o; 0 <= h; h--) {
+    for (let r2, h = s; 0 <= h; h--) {
       r2 = 32767;
       const i2 = a.__halfDigit(h + g);
       if (i2 !== u) {
         const t2 = (i2 << 15 | a.__halfDigit(h + g - 1)) >>> 0;
         r2 = 0 | t2 / u;
         let e3 = 0 | t2 % u;
-        const n3 = _.__halfDigit(g - 2), o2 = a.__halfDigit(h + g - 2);
-        for (; _JSBI.__imul(r2, n3) >>> 0 > (e3 << 16 | o2) >>> 0 && (r2--, e3 += u, !(32767 < e3)); ) ;
+        const n3 = _.__halfDigit(g - 2), s2 = a.__halfDigit(h + g - 2);
+        for (; _JSBI.__imul(r2, n3) >>> 0 > (e3 << 16 | s2) >>> 0 && (r2--, e3 += u, !(32767 < e3)); ) ;
       }
       _JSBI.__internalMultiplyAdd(_, r2, 0, n2, l);
       let e2 = a.__inplaceSub(l, h, g + 1);
-      0 !== e2 && (e2 = a.__inplaceAdd(_, h, g), a.__setHalfDigit(h + g, 32767 & a.__halfDigit(h + g) + e2), r2--), t && (1 & h ? d = r2 << 15 : s.__setDigit(h >>> 1, d | r2));
+      0 !== e2 && (e2 = a.__inplaceAdd(_, h, g), a.__setHalfDigit(h + g, 32767 & a.__halfDigit(h + g) + e2), r2--), t && (1 & h ? d = r2 << 15 : o.__setDigit(h >>> 1, d | r2));
     }
-    if (e) return a.__inplaceRightShift(r), t ? { quotient: s, remainder: a } : a;
-    if (t) return s;
+    if (e) return a.__inplaceRightShift(r), t ? { quotient: o, remainder: a } : a;
+    if (t) return o;
     throw new Error("unreachable");
   }
   static __clz15(i) {
@@ -30832,28 +30855,28 @@ var JSBI = class _JSBI extends Array {
     let n2 = 0;
     if (1 & t) {
       t >>= 1;
-      let g = this.__digit(t), o = 32767 & g, s = 0;
-      for (; s < e - 1 >>> 1; s++) {
-        const i2 = _.__digit(s), e2 = (g >>> 15) - (32767 & i2) - n2;
-        n2 = 1 & e2 >>> 15, this.__setDigit(t + s, (32767 & e2) << 15 | 32767 & o), g = this.__digit(t + s + 1), o = (32767 & g) - (i2 >>> 15) - n2, n2 = 1 & o >>> 15;
+      let g = this.__digit(t), s = 32767 & g, o = 0;
+      for (; o < e - 1 >>> 1; o++) {
+        const i2 = _.__digit(o), e2 = (g >>> 15) - (32767 & i2) - n2;
+        n2 = 1 & e2 >>> 15, this.__setDigit(t + o, (32767 & e2) << 15 | 32767 & s), g = this.__digit(t + o + 1), s = (32767 & g) - (i2 >>> 15) - n2, n2 = 1 & s >>> 15;
       }
-      const i = _.__digit(s), l = (g >>> 15) - (32767 & i) - n2;
-      n2 = 1 & l >>> 15, this.__setDigit(t + s, (32767 & l) << 15 | 32767 & o);
-      if (t + s + 1 >= this.length) throw new RangeError("out of bounds");
-      0 == (1 & e) && (g = this.__digit(t + s + 1), o = (32767 & g) - (i >>> 15) - n2, n2 = 1 & o >>> 15, this.__setDigit(t + _.length, 1073709056 & g | 32767 & o));
+      const i = _.__digit(o), l = (g >>> 15) - (32767 & i) - n2;
+      n2 = 1 & l >>> 15, this.__setDigit(t + o, (32767 & l) << 15 | 32767 & s);
+      if (t + o + 1 >= this.length) throw new RangeError("out of bounds");
+      0 == (1 & e) && (g = this.__digit(t + o + 1), s = (32767 & g) - (i >>> 15) - n2, n2 = 1 & s >>> 15, this.__setDigit(t + _.length, 1073709056 & g | 32767 & s));
     } else {
       t >>= 1;
       let g = 0;
       for (; g < _.length - 1; g++) {
-        const i2 = this.__digit(t + g), e2 = _.__digit(g), o2 = (32767 & i2) - (32767 & e2) - n2;
-        n2 = 1 & o2 >>> 15;
-        const s2 = (i2 >>> 15) - (e2 >>> 15) - n2;
-        n2 = 1 & s2 >>> 15, this.__setDigit(t + g, (32767 & s2) << 15 | 32767 & o2);
+        const i2 = this.__digit(t + g), e2 = _.__digit(g), s2 = (32767 & i2) - (32767 & e2) - n2;
+        n2 = 1 & s2 >>> 15;
+        const o2 = (i2 >>> 15) - (e2 >>> 15) - n2;
+        n2 = 1 & o2 >>> 15, this.__setDigit(t + g, (32767 & o2) << 15 | 32767 & s2);
       }
-      const i = this.__digit(t + g), o = _.__digit(g), s = (32767 & i) - (32767 & o) - n2;
-      n2 = 1 & s >>> 15;
+      const i = this.__digit(t + g), s = _.__digit(g), o = (32767 & i) - (32767 & s) - n2;
+      n2 = 1 & o >>> 15;
       let l = 0;
-      0 == (1 & e) && (l = (i >>> 15) - (o >>> 15) - n2, n2 = 1 & l >>> 15), this.__setDigit(t + g, (32767 & l) << 15 | 32767 & s);
+      0 == (1 & e) && (l = (i >>> 15) - (s >>> 15) - n2, n2 = 1 & l >>> 15), this.__setDigit(t + g, (32767 & l) << 15 | 32767 & o);
     }
     return n2;
   }
@@ -30873,29 +30896,29 @@ var JSBI = class _JSBI extends Array {
       for (let t2 = 0; t2 < g; t2++) n2.__setDigit(t2, _.__digit(t2));
       return 0 < e && n2.__setDigit(g, 0), n2;
     }
-    let o = 0;
-    for (let s = 0; s < g; s++) {
-      const i = _.__digit(s);
-      n2.__setDigit(s, 1073741823 & i << t | o), o = i >>> 30 - t;
+    let s = 0;
+    for (let o = 0; o < g; o++) {
+      const i = _.__digit(o);
+      n2.__setDigit(o, 1073741823 & i << t | s), s = i >>> 30 - t;
     }
-    return 0 < e && n2.__setDigit(g, o), n2;
+    return 0 < e && n2.__setDigit(g, s), n2;
   }
   static __leftShiftByAbsolute(_, i) {
     const t = _JSBI.__toShiftAmount(i);
     if (0 > t) throw new RangeError("BigInt too big");
-    const e = 0 | t / 30, n2 = t % 30, g = _.length, o = 0 !== n2 && 0 != _.__digit(g - 1) >>> 30 - n2, s = g + e + (o ? 1 : 0), l = new _JSBI(s, _.sign);
+    const e = 0 | t / 30, n2 = t % 30, g = _.length, s = 0 !== n2 && 0 != _.__digit(g - 1) >>> 30 - n2, o = g + e + (s ? 1 : 0), l = new _JSBI(o, _.sign);
     if (0 === n2) {
       let t2 = 0;
       for (; t2 < e; t2++) l.__setDigit(t2, 0);
-      for (; t2 < s; t2++) l.__setDigit(t2, _.__digit(t2 - e));
+      for (; t2 < o; t2++) l.__setDigit(t2, _.__digit(t2 - e));
     } else {
       let t2 = 0;
       for (let _2 = 0; _2 < e; _2++) l.__setDigit(_2, 0);
-      for (let o2 = 0; o2 < g; o2++) {
-        const i2 = _.__digit(o2);
-        l.__setDigit(o2 + e, 1073741823 & i2 << n2 | t2), t2 = i2 >>> 30 - n2;
+      for (let s2 = 0; s2 < g; s2++) {
+        const i2 = _.__digit(s2);
+        l.__setDigit(s2 + e, 1073741823 & i2 << n2 | t2), t2 = i2 >>> 30 - n2;
       }
-      if (o) l.__setDigit(g + e, t2);
+      if (s) l.__setDigit(g + e, t2);
       else if (0 !== t2) throw new Error("implementation bug");
     }
     return l.__trim();
@@ -30903,31 +30926,31 @@ var JSBI = class _JSBI extends Array {
   static __rightShiftByAbsolute(_, i) {
     const t = _.length, e = _.sign, n2 = _JSBI.__toShiftAmount(i);
     if (0 > n2) return _JSBI.__rightShiftByMaximum(e);
-    const g = 0 | n2 / 30, o = n2 % 30;
-    let s = t - g;
-    if (0 >= s) return _JSBI.__rightShiftByMaximum(e);
+    const g = 0 | n2 / 30, s = n2 % 30;
+    let o = t - g;
+    if (0 >= o) return _JSBI.__rightShiftByMaximum(e);
     let l = false;
     if (e) {
-      if (0 != (_.__digit(g) & (1 << o) - 1)) l = true;
+      if (0 != (_.__digit(g) & (1 << s) - 1)) l = true;
       else for (let t2 = 0; t2 < g; t2++) if (0 !== _.__digit(t2)) {
         l = true;
         break;
       }
     }
-    if (l && 0 === o) {
+    if (l && 0 === s) {
       const i2 = _.__digit(t - 1);
-      0 == ~i2 && s++;
+      0 == ~i2 && o++;
     }
-    let r = new _JSBI(s, e);
-    if (0 === o) {
-      r.__setDigit(s - 1, 0);
+    let r = new _JSBI(o, e);
+    if (0 === s) {
+      r.__setDigit(o - 1, 0);
       for (let e2 = g; e2 < t; e2++) r.__setDigit(e2 - g, _.__digit(e2));
     } else {
-      let e2 = _.__digit(g) >>> o;
+      let e2 = _.__digit(g) >>> s;
       const n3 = t - g - 1;
       for (let t2 = 0; t2 < n3; t2++) {
         const i2 = _.__digit(t2 + g + 1);
-        r.__setDigit(t2, 1073741823 & i2 << 30 - o | e2), e2 = i2 >>> o;
+        r.__setDigit(t2, 1073741823 & i2 << 30 - s | e2), e2 = i2 >>> s;
       }
       r.__setDigit(n3, e2);
     }
@@ -30982,15 +31005,15 @@ var JSBI = class _JSBI extends Array {
   }
   static __truncateAndSubFromPowerOfTwo(_, t, e) {
     var n2 = Math.min;
-    const g = 0 | (_ + 29) / 30, o = new _JSBI(g, e);
-    let s = 0;
+    const g = 0 | (_ + 29) / 30, s = new _JSBI(g, e);
+    let o = 0;
     const l = g - 1;
     let a = 0;
-    for (const i = n2(l, t.length); s < i; s++) {
-      const i2 = 0 - t.__digit(s) - a;
-      a = 1 & i2 >>> 30, o.__setDigit(s, 1073741823 & i2);
+    for (const i = n2(l, t.length); o < i; o++) {
+      const i2 = 0 - t.__digit(o) - a;
+      a = 1 & i2 >>> 30, s.__setDigit(o, 1073741823 & i2);
     }
-    for (; s < l; s++) o.__setDigit(s, 0 | 1073741823 & -a);
+    for (; o < l; o++) s.__setDigit(o, 0 | 1073741823 & -a);
     let u = l < t.length ? t.__digit(l) : 0;
     const d = _ % 30;
     let h;
@@ -31001,7 +31024,7 @@ var JSBI = class _JSBI extends Array {
       const _2 = 1 << 32 - i;
       h = _2 - u - a, h &= _2 - 1;
     }
-    return o.__setDigit(l, h), o.__trim();
+    return s.__setDigit(l, h), s.__trim();
   }
   __digit(_) {
     return this[_];
@@ -32691,10 +32714,10 @@ var ErrorCode;
 })(ErrorCode || (ErrorCode = {}));
 var HEX = "0123456789abcdef";
 var Logger = class _Logger {
-  constructor(version10) {
+  constructor(version9) {
     Object.defineProperty(this, "version", {
       enumerable: true,
-      value: version10,
+      value: version9,
       writable: false
     });
   }
@@ -32909,8 +32932,8 @@ var Logger = class _Logger {
     }
     _logLevel = level;
   }
-  static from(version10) {
-    return new _Logger(version10);
+  static from(version9) {
+    return new _Logger(version9);
   }
 };
 Logger.errors = ErrorCode;
@@ -34389,7 +34412,7 @@ var Reader2 = class _Reader {
   }
 };
 
-// ../../node_modules/@ethersproject/address/node_modules/@ethersproject/keccak256/lib.esm/index.js
+// ../../node_modules/@ethersproject/keccak256/lib.esm/index.js
 var import_js_sha3 = __toESM(require_sha3());
 function keccak2563(data4) {
   return "0x" + import_js_sha3.default.keccak_256(arrayify(data4));
@@ -34835,28 +34858,28 @@ var NumberCoder2 = class extends Coder2 {
   }
 };
 
-// ../../node_modules/@ethersproject/abi/node_modules/@ethersproject/strings/lib.esm/_version.js
+// ../../node_modules/@ethersproject/strings/lib.esm/_version.js
 var version8 = "strings/5.8.0";
 
-// ../../node_modules/@ethersproject/abi/node_modules/@ethersproject/strings/lib.esm/utf8.js
+// ../../node_modules/@ethersproject/strings/lib.esm/utf8.js
 var logger8 = new Logger(version8);
 var UnicodeNormalizationForm;
-(function(UnicodeNormalizationForm3) {
-  UnicodeNormalizationForm3["current"] = "";
-  UnicodeNormalizationForm3["NFC"] = "NFC";
-  UnicodeNormalizationForm3["NFD"] = "NFD";
-  UnicodeNormalizationForm3["NFKC"] = "NFKC";
-  UnicodeNormalizationForm3["NFKD"] = "NFKD";
+(function(UnicodeNormalizationForm2) {
+  UnicodeNormalizationForm2["current"] = "";
+  UnicodeNormalizationForm2["NFC"] = "NFC";
+  UnicodeNormalizationForm2["NFD"] = "NFD";
+  UnicodeNormalizationForm2["NFKC"] = "NFKC";
+  UnicodeNormalizationForm2["NFKD"] = "NFKD";
 })(UnicodeNormalizationForm || (UnicodeNormalizationForm = {}));
 var Utf8ErrorReason;
-(function(Utf8ErrorReason3) {
-  Utf8ErrorReason3["UNEXPECTED_CONTINUE"] = "unexpected continuation byte";
-  Utf8ErrorReason3["BAD_PREFIX"] = "bad codepoint prefix";
-  Utf8ErrorReason3["OVERRUN"] = "string overrun";
-  Utf8ErrorReason3["MISSING_CONTINUE"] = "missing continuation byte";
-  Utf8ErrorReason3["OUT_OF_RANGE"] = "out of UTF-8 range";
-  Utf8ErrorReason3["UTF16_SURROGATE"] = "UTF-16 surrogate";
-  Utf8ErrorReason3["OVERLONG"] = "overlong representation";
+(function(Utf8ErrorReason2) {
+  Utf8ErrorReason2["UNEXPECTED_CONTINUE"] = "unexpected continuation byte";
+  Utf8ErrorReason2["BAD_PREFIX"] = "bad codepoint prefix";
+  Utf8ErrorReason2["OVERRUN"] = "string overrun";
+  Utf8ErrorReason2["MISSING_CONTINUE"] = "missing continuation byte";
+  Utf8ErrorReason2["OUT_OF_RANGE"] = "out of UTF-8 range";
+  Utf8ErrorReason2["UTF16_SURROGATE"] = "UTF-16 surrogate";
+  Utf8ErrorReason2["OVERLONG"] = "overlong representation";
 })(Utf8ErrorReason || (Utf8ErrorReason = {}));
 function errorFunc2(reason, offset, bytes2, output2, badCodepoint) {
   return logger8.throwArgumentError(`invalid codepoint at offset ${offset}; ${reason}`, "bytes", bytes2);
@@ -35151,113 +35174,13 @@ var AbiCoder2 = class {
 };
 var defaultAbiCoder = new AbiCoder2();
 
-// ../../node_modules/@ethersproject/hash/node_modules/@ethersproject/keccak256/lib.esm/index.js
-var import_js_sha32 = __toESM(require_sha3());
-function keccak2564(data4) {
-  return "0x" + import_js_sha32.default.keccak_256(arrayify(data4));
-}
-
-// ../../node_modules/@ethersproject/hash/node_modules/@ethersproject/strings/lib.esm/_version.js
-var version9 = "strings/5.8.0";
-
-// ../../node_modules/@ethersproject/hash/node_modules/@ethersproject/strings/lib.esm/utf8.js
-var logger10 = new Logger(version9);
-var UnicodeNormalizationForm2;
-(function(UnicodeNormalizationForm3) {
-  UnicodeNormalizationForm3["current"] = "";
-  UnicodeNormalizationForm3["NFC"] = "NFC";
-  UnicodeNormalizationForm3["NFD"] = "NFD";
-  UnicodeNormalizationForm3["NFKC"] = "NFKC";
-  UnicodeNormalizationForm3["NFKD"] = "NFKD";
-})(UnicodeNormalizationForm2 || (UnicodeNormalizationForm2 = {}));
-var Utf8ErrorReason2;
-(function(Utf8ErrorReason3) {
-  Utf8ErrorReason3["UNEXPECTED_CONTINUE"] = "unexpected continuation byte";
-  Utf8ErrorReason3["BAD_PREFIX"] = "bad codepoint prefix";
-  Utf8ErrorReason3["OVERRUN"] = "string overrun";
-  Utf8ErrorReason3["MISSING_CONTINUE"] = "missing continuation byte";
-  Utf8ErrorReason3["OUT_OF_RANGE"] = "out of UTF-8 range";
-  Utf8ErrorReason3["UTF16_SURROGATE"] = "UTF-16 surrogate";
-  Utf8ErrorReason3["OVERLONG"] = "overlong representation";
-})(Utf8ErrorReason2 || (Utf8ErrorReason2 = {}));
-function errorFunc3(reason, offset, bytes2, output2, badCodepoint) {
-  return logger10.throwArgumentError(`invalid codepoint at offset ${offset}; ${reason}`, "bytes", bytes2);
-}
-function ignoreFunc3(reason, offset, bytes2, output2, badCodepoint) {
-  if (reason === Utf8ErrorReason2.BAD_PREFIX || reason === Utf8ErrorReason2.UNEXPECTED_CONTINUE) {
-    let i = 0;
-    for (let o = offset + 1; o < bytes2.length; o++) {
-      if (bytes2[o] >> 6 !== 2) {
-        break;
-      }
-      i++;
-    }
-    return i;
-  }
-  if (reason === Utf8ErrorReason2.OVERRUN) {
-    return bytes2.length - offset - 1;
-  }
-  return 0;
-}
-function replaceFunc3(reason, offset, bytes2, output2, badCodepoint) {
-  if (reason === Utf8ErrorReason2.OVERLONG) {
-    output2.push(badCodepoint);
-    return 0;
-  }
-  output2.push(65533);
-  return ignoreFunc3(reason, offset, bytes2, output2, badCodepoint);
-}
-var Utf8ErrorFuncs3 = Object.freeze({
-  error: errorFunc3,
-  ignore: ignoreFunc3,
-  replace: replaceFunc3
-});
-function toUtf8Bytes3(str, form = UnicodeNormalizationForm2.current) {
-  if (form != UnicodeNormalizationForm2.current) {
-    logger10.checkNormalize();
-    str = str.normalize(form);
-  }
-  let result = [];
-  for (let i = 0; i < str.length; i++) {
-    const c = str.charCodeAt(i);
-    if (c < 128) {
-      result.push(c);
-    } else if (c < 2048) {
-      result.push(c >> 6 | 192);
-      result.push(c & 63 | 128);
-    } else if ((c & 64512) == 55296) {
-      i++;
-      const c2 = str.charCodeAt(i);
-      if (i >= str.length || (c2 & 64512) !== 56320) {
-        throw new Error("invalid utf-8 string");
-      }
-      const pair = 65536 + ((c & 1023) << 10) + (c2 & 1023);
-      result.push(pair >> 18 | 240);
-      result.push(pair >> 12 & 63 | 128);
-      result.push(pair >> 6 & 63 | 128);
-      result.push(pair & 63 | 128);
-    } else {
-      result.push(c >> 12 | 224);
-      result.push(c >> 6 & 63 | 128);
-      result.push(c & 63 | 128);
-    }
-  }
-  return arrayify(result);
-}
-
 // ../../node_modules/@ethersproject/hash/lib.esm/id.js
 function id2(text) {
-  return keccak2564(toUtf8Bytes3(text));
-}
-
-// ../../node_modules/@ethersproject/abi/node_modules/@ethersproject/keccak256/lib.esm/index.js
-var import_js_sha33 = __toESM(require_sha3());
-function keccak2565(data4) {
-  return "0x" + import_js_sha33.default.keccak_256(arrayify(data4));
+  return keccak2563(toUtf8Bytes2(text));
 }
 
 // ../../node_modules/@ethersproject/abi/lib.esm/interface.js
-var logger11 = new Logger(version6);
+var logger10 = new Logger(version6);
 var LogDescription2 = class extends Description {
 };
 var TransactionDescription2 = class extends Description {
@@ -35299,7 +35222,7 @@ var Interface2 = class {
       switch (fragment.type) {
         case "constructor":
           if (this.deploy) {
-            logger11.warn("duplicate definition - constructor");
+            logger10.warn("duplicate definition - constructor");
             return;
           }
           defineReadOnly(this, "deploy", fragment);
@@ -35318,7 +35241,7 @@ var Interface2 = class {
       }
       let signature = fragment.format();
       if (bucket[signature]) {
-        logger11.warn("duplicate definition - " + signature);
+        logger10.warn("duplicate definition - " + signature);
         return;
       }
       bucket[signature] = fragment;
@@ -35336,7 +35259,7 @@ var Interface2 = class {
       format = FormatTypes.full;
     }
     if (format === FormatTypes.sighash) {
-      logger11.throwArgumentError("interface does not support formatting sighash", "format", format);
+      logger10.throwArgumentError("interface does not support formatting sighash", "format", format);
     }
     const abi = this.fragments.map((fragment) => fragment.format(format));
     if (format === FormatTypes.json) {
@@ -35365,7 +35288,7 @@ var Interface2 = class {
           return this.functions[name];
         }
       }
-      logger11.throwArgumentError("no matching function", "sighash", nameOrSignatureOrSighash);
+      logger10.throwArgumentError("no matching function", "sighash", nameOrSignatureOrSighash);
     }
     if (nameOrSignatureOrSighash.indexOf("(") === -1) {
       const name = nameOrSignatureOrSighash.trim();
@@ -35374,15 +35297,15 @@ var Interface2 = class {
         /* fix:) */
       )[0] === name);
       if (matching.length === 0) {
-        logger11.throwArgumentError("no matching function", "name", name);
+        logger10.throwArgumentError("no matching function", "name", name);
       } else if (matching.length > 1) {
-        logger11.throwArgumentError("multiple matching functions", "name", name);
+        logger10.throwArgumentError("multiple matching functions", "name", name);
       }
       return this.functions[matching[0]];
     }
     const result = this.functions[FunctionFragment2.fromString(nameOrSignatureOrSighash).format()];
     if (!result) {
-      logger11.throwArgumentError("no matching function", "signature", nameOrSignatureOrSighash);
+      logger10.throwArgumentError("no matching function", "signature", nameOrSignatureOrSighash);
     }
     return result;
   }
@@ -35395,7 +35318,7 @@ var Interface2 = class {
           return this.events[name];
         }
       }
-      logger11.throwArgumentError("no matching event", "topichash", topichash);
+      logger10.throwArgumentError("no matching event", "topichash", topichash);
     }
     if (nameOrSignatureOrTopic.indexOf("(") === -1) {
       const name = nameOrSignatureOrTopic.trim();
@@ -35404,15 +35327,15 @@ var Interface2 = class {
         /* fix:) */
       )[0] === name);
       if (matching.length === 0) {
-        logger11.throwArgumentError("no matching event", "name", name);
+        logger10.throwArgumentError("no matching event", "name", name);
       } else if (matching.length > 1) {
-        logger11.throwArgumentError("multiple matching events", "name", name);
+        logger10.throwArgumentError("multiple matching events", "name", name);
       }
       return this.events[matching[0]];
     }
     const result = this.events[EventFragment2.fromString(nameOrSignatureOrTopic).format()];
     if (!result) {
-      logger11.throwArgumentError("no matching event", "signature", nameOrSignatureOrTopic);
+      logger10.throwArgumentError("no matching event", "signature", nameOrSignatureOrTopic);
     }
     return result;
   }
@@ -35426,7 +35349,7 @@ var Interface2 = class {
           return this.errors[name];
         }
       }
-      logger11.throwArgumentError("no matching error", "sighash", nameOrSignatureOrSighash);
+      logger10.throwArgumentError("no matching error", "sighash", nameOrSignatureOrSighash);
     }
     if (nameOrSignatureOrSighash.indexOf("(") === -1) {
       const name = nameOrSignatureOrSighash.trim();
@@ -35435,15 +35358,15 @@ var Interface2 = class {
         /* fix:) */
       )[0] === name);
       if (matching.length === 0) {
-        logger11.throwArgumentError("no matching error", "name", name);
+        logger10.throwArgumentError("no matching error", "name", name);
       } else if (matching.length > 1) {
-        logger11.throwArgumentError("multiple matching errors", "name", name);
+        logger10.throwArgumentError("multiple matching errors", "name", name);
       }
       return this.errors[matching[0]];
     }
     const result = this.errors[FunctionFragment2.fromString(nameOrSignatureOrSighash).format()];
     if (!result) {
-      logger11.throwArgumentError("no matching error", "signature", nameOrSignatureOrSighash);
+      logger10.throwArgumentError("no matching error", "signature", nameOrSignatureOrSighash);
     }
     return result;
   }
@@ -35484,7 +35407,7 @@ var Interface2 = class {
     }
     const bytes2 = arrayify(data4);
     if (hexlify2(bytes2.slice(0, 4)) !== this.getSighash(fragment)) {
-      logger11.throwArgumentError(`data signature does not match error ${fragment.name}.`, "data", hexlify2(bytes2));
+      logger10.throwArgumentError(`data signature does not match error ${fragment.name}.`, "data", hexlify2(bytes2));
     }
     return this._decodeParams(fragment.inputs, bytes2.slice(4));
   }
@@ -35504,7 +35427,7 @@ var Interface2 = class {
     }
     const bytes2 = arrayify(data4);
     if (hexlify2(bytes2.slice(0, 4)) !== this.getSighash(functionFragment)) {
-      logger11.throwArgumentError(`data signature does not match function ${functionFragment.name}.`, "data", hexlify2(bytes2));
+      logger10.throwArgumentError(`data signature does not match function ${functionFragment.name}.`, "data", hexlify2(bytes2));
     }
     return this._decodeParams(functionFragment.inputs, bytes2.slice(4));
   }
@@ -35563,7 +35486,7 @@ var Interface2 = class {
         break;
       }
     }
-    return logger11.throwError("call revert exception" + message, Logger.errors.CALL_EXCEPTION, {
+    return logger10.throwError("call revert exception" + message, Logger.errors.CALL_EXCEPTION, {
       method: functionFragment.format(),
       data: hexlify2(data4),
       errorArgs,
@@ -35585,7 +35508,7 @@ var Interface2 = class {
       eventFragment = this.getEvent(eventFragment);
     }
     if (values.length > eventFragment.inputs.length) {
-      logger11.throwError("too many arguments for " + eventFragment.format(), Logger.errors.UNEXPECTED_ARGUMENT, {
+      logger10.throwError("too many arguments for " + eventFragment.format(), Logger.errors.UNEXPECTED_ARGUMENT, {
         argument: "values",
         value: values
       });
@@ -35598,7 +35521,7 @@ var Interface2 = class {
       if (param.type === "string") {
         return id2(value);
       } else if (param.type === "bytes") {
-        return keccak2565(hexlify2(value));
+        return keccak2563(hexlify2(value));
       }
       if (param.type === "bool" && typeof value === "boolean") {
         value = value ? "0x01" : "0x00";
@@ -35615,14 +35538,14 @@ var Interface2 = class {
       let param = eventFragment.inputs[index];
       if (!param.indexed) {
         if (value != null) {
-          logger11.throwArgumentError("cannot filter non-indexed parameters; must be null", "contract." + param.name, value);
+          logger10.throwArgumentError("cannot filter non-indexed parameters; must be null", "contract." + param.name, value);
         }
         return;
       }
       if (value == null) {
         topics.push(null);
       } else if (param.baseType === "array" || param.baseType === "tuple") {
-        logger11.throwArgumentError("filtering with tuples or arrays not supported", "contract." + param.name, value);
+        logger10.throwArgumentError("filtering with tuples or arrays not supported", "contract." + param.name, value);
       } else if (Array.isArray(value)) {
         topics.push(value.map((value2) => encodeTopic(param, value2)));
       } else {
@@ -35645,7 +35568,7 @@ var Interface2 = class {
       topics.push(this.getEventTopic(eventFragment));
     }
     if (values.length !== eventFragment.inputs.length) {
-      logger11.throwArgumentError("event arguments/values mismatch", "values", values);
+      logger10.throwArgumentError("event arguments/values mismatch", "values", values);
     }
     eventFragment.inputs.forEach((param, index) => {
       const value = values[index];
@@ -35653,7 +35576,7 @@ var Interface2 = class {
         if (param.type === "string") {
           topics.push(id2(value));
         } else if (param.type === "bytes") {
-          topics.push(keccak2565(value));
+          topics.push(keccak2563(value));
         } else if (param.baseType === "tuple" || param.baseType === "array") {
           throw new Error("not implemented");
         } else {
@@ -35677,7 +35600,7 @@ var Interface2 = class {
     if (topics != null && !eventFragment.anonymous) {
       let topicHash = this.getEventTopic(eventFragment);
       if (!isHexString2(topics[0], 32) || topics[0].toLowerCase() !== topicHash) {
-        logger11.throwError("fragment/topic mismatch", Logger.errors.INVALID_ARGUMENT, { argument: "topics[0]", expected: topicHash, value: topics[0] });
+        logger10.throwError("fragment/topic mismatch", Logger.errors.INVALID_ARGUMENT, { argument: "topics[0]", expected: topicHash, value: topics[0] });
       }
       topics = topics.slice(1);
     }

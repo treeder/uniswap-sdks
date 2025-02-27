@@ -2,21 +2,18 @@
   "name": "sdks",
   "version": "2.0.3",
   "dependencies": {
-    "@babel/runtime": "7.26.9",
+    "@babel/runtime": "^7.26.9",
     "@manypkg/cli": "^0.19.2",
     "@semantic-release/exec": "6.0.3",
     "@typescript-eslint/eslint-plugin": "^8.25.0",
-    "danger": "11.2.6",
+    "danger": "^11.2.6",
     "eslint": "^9.21.0",
-    "eslint-plugin-prettier": "^3.4.1",
+    "eslint-plugin-prettier": "^5.2.3",
     "husky": "^8.0.3",
     "semantic-release": "^20.1.0",
-    "semantic-release-monorepo": "7.0.5",
+    "semantic-release-monorepo": "^7.0.5",
     "syncpack": "^8.5.14",
     "turbo": "^2.4.4"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
   },
   "engines": {
     "node": ">=10",

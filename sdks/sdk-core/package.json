@@ -15,7 +15,7 @@
     "dist"
   ],
   "engines": {
-    "node": ">=10"
+    "node": ">=14"
   },
   "scripts": {
     "build": "tsup src/index.ts --format esm",
@@ -27,16 +27,16 @@
   "dependencies": {
     "@ethersproject/address": "^5.0.2",
     "@ethersproject/bytes": "^5.7.0",
-    "@ethersproject/keccak256": "5.7.0",
-    "@ethersproject/strings": "5.7.0",
-    "big.js": "^5.2.2",
+    "@ethersproject/keccak256": "^5.7.0",
+    "@ethersproject/strings": "^5.7.0",
+    "big.js": "^6.2.2",
     "decimal.js-light": "^2.5.0",
-    "jsbi": "^3.1.4",
+    "jsbi": "^4.3.0",
     "tiny-invariant": "^1.1.0",
     "toformat": "^2.0.0"
   },
   "devDependencies": {
-    "@types/big.js": "^4.0.5",
+    "@types/big.js": "^6.2.2",
     "@types/jest": "^29.5.14",
     "tsdx": "^0.14.1"
   },

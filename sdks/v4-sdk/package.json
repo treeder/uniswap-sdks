@@ -14,7 +14,7 @@
   "type": "module",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
-  "module": "dist/v4-sdk.esm.js",
+  "module": "dist/index.js",
   "files": [
     "dist"
   ],
@@ -36,13 +36,13 @@
     "tiny-warning": "^1.0.3"
   },
   "devDependencies": {
-    "@types/chai": "^4.3.3",
-    "@types/mocha": "^9.1.1",
-    "@types/node": "^18.7.16",
+    "@types/chai": "^5.0.1",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.13.5",
     "@types/node-fetch": "^2.6.2",
-    "chai": "^4.3.6",
+    "chai": "^5.2.0",
     "dotenv": "^16.0.3",
-    "eslint-plugin-prettier": "^3.4.1",
+    "eslint-plugin-prettier": "^5.2.3",
     "prettier": "^3.5.2",
     "ts-node": "^10.9.1",
     "tsdx": "^0.14.1",
