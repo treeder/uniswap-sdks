@@ -1,6 +1,7 @@
 {
   "name": "@uniswap/v4-sdk",
   "description": "⚒️ An SDK for building applications on top of Uniswap V4",
+  "version": "2.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/treeder/uniswap-sdks.git"
