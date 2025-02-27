@@ -4,7 +4,7 @@
       "inputs": [
         "sdks/*/src/**.ts",
         "sdks/*/src/**.tsx",
-        "!sdks/uniswapx-sdk"
+        "!sdks/uniswapx-sdk/**"
       ]
     },
     "build": {
@@ -13,7 +13,8 @@
         "**/package.json",
         "sdks/*/src/**.ts",
         "sdks/*/src/**.tsx",
-        "!sdks/uniswapx-sdk"
+        "!sdks/uniswapx-sdk/**",
+        "!sdks/uniswapx-sdk/src/**"
       ],
       "outputs": [
         "sdks/*/dist/**"

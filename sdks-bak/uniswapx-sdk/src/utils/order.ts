@@ -1,7 +1,7 @@
 import { BigNumber, ethers } from "ethers"
 
-import { OrderType, REVERSE_REACTOR_MAPPING } from "../constants"
-import { MissingConfiguration } from "../errors"
+import { OrderType, REVERSE_REACTOR_MAPPING } from "../constants.ts"
+import { MissingConfiguration } from "../errors.ts"
 import {
   CosignedPriorityOrder,
   CosignedV2DutchOrder,
@@ -11,8 +11,8 @@ import {
   UniswapXOrder,
   UnsignedPriorityOrder,
   UnsignedV2DutchOrder,
-} from "../order"
-import { CosignedV3DutchOrder, UnsignedV3DutchOrder } from "../order/V3DutchOrder"
+} from "../order/index.ts"
+import { CosignedV3DutchOrder, UnsignedV3DutchOrder } from "../order/V3DutchOrder.ts"
 
 import { stripHexPrefix } from "./index.ts"
 
