@@ -7012,7 +7012,7 @@ var Trade = class _Trade {
 
 // src/multicall.ts
 import { Interface } from "@ethersproject/abi";
-import IMulticall from "@uniswap/v3-periphery/artifacts/contracts/interfaces/IMulticall.sol/IMulticall.json";
+import IMulticall from "@uniswap/v3-periphery/artifacts/contracts/interfaces/IMulticall.sol/IMulticall.json" with { type: "json" };
 var Multicall = class _Multicall {
   static INTERFACE = new Interface(IMulticall.abi);
   /**
@@ -7038,11 +7038,11 @@ import {
 } from "@uniswap/sdk-core";
 import invariant12 from "tiny-invariant";
 import { Interface as Interface4 } from "@ethersproject/abi";
-import INonfungiblePositionManager from "@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json";
+import INonfungiblePositionManager from "@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json" with { type: "json" };
 
 // src/selfPermit.ts
 import { Interface as Interface2 } from "@ethersproject/abi";
-import ISelfPermit from "@uniswap/v3-periphery/artifacts/contracts/interfaces/ISelfPermit.sol/ISelfPermit.json";
+import ISelfPermit from "@uniswap/v3-periphery/artifacts/contracts/interfaces/ISelfPermit.sol/ISelfPermit.json" with { type: "json" };
 function isAllowedPermit(permitOptions) {
   return "nonce" in permitOptions;
 }
@@ -7074,7 +7074,7 @@ var SelfPermit = class _SelfPermit {
 
 // src/payments.ts
 import { Interface as Interface3 } from "@ethersproject/abi";
-import IPeripheryPaymentsWithFee from "@uniswap/v3-periphery/artifacts/contracts/interfaces/IPeripheryPaymentsWithFee.sol/IPeripheryPaymentsWithFee.json";
+import IPeripheryPaymentsWithFee from "@uniswap/v3-periphery/artifacts/contracts/interfaces/IPeripheryPaymentsWithFee.sol/IPeripheryPaymentsWithFee.json" with { type: "json" };
 import { validateAndParseAddress } from "@uniswap/sdk-core";
 var Payments = class _Payments {
   static INTERFACE = new Interface3(IPeripheryPaymentsWithFee.abi);
@@ -7360,8 +7360,8 @@ var NonfungiblePositionManager = class _NonfungiblePositionManager {
 // src/quoter.ts
 import { Interface as Interface5 } from "@ethersproject/abi";
 import { TradeType as TradeType2 } from "@uniswap/sdk-core";
-import IQuoter from "@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json";
-import IQuoterV2 from "@uniswap/swap-router-contracts/artifacts/contracts/lens/QuoterV2.sol/QuoterV2.json";
+import IQuoter from "@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json" with { type: "json" };
+import IQuoterV2 from "@uniswap/swap-router-contracts/artifacts/contracts/lens/QuoterV2.sol/QuoterV2.json" with { type: "json" };
 import invariant13 from "tiny-invariant";
 var SwapQuoter = class {
   static V1INTERFACE = new Interface5(IQuoter.abi);
@@ -7421,7 +7421,7 @@ var SwapQuoter = class {
 // src/staker.ts
 import { validateAndParseAddress as validateAndParseAddress3 } from "@uniswap/sdk-core";
 import { defaultAbiCoder as defaultAbiCoder2, Interface as Interface6 } from "@ethersproject/abi";
-import IUniswapV3Staker from "@uniswap/v3-staker/artifacts/contracts/UniswapV3Staker.sol/UniswapV3Staker.json";
+import IUniswapV3Staker from "@uniswap/v3-staker/artifacts/contracts/UniswapV3Staker.sol/UniswapV3Staker.json" with { type: "json" };
 var Staker = class _Staker {
   static INTERFACE = new Interface6(IUniswapV3Staker.abi);
   constructor() {
@@ -7548,7 +7548,7 @@ var Staker = class _Staker {
 import { Interface as Interface7 } from "@ethersproject/abi";
 import { CurrencyAmount as CurrencyAmount6, TradeType as TradeType3, validateAndParseAddress as validateAndParseAddress4 } from "@uniswap/sdk-core";
 import invariant14 from "tiny-invariant";
-import ISwapRouter from "@uniswap/v3-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json";
+import ISwapRouter from "@uniswap/v3-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json" with { type: "json" };
 var SwapRouter = class _SwapRouter {
   static INTERFACE = new Interface7(ISwapRouter.abi);
   /**
