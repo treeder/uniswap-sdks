@@ -21,11 +21,13 @@ jobs:
       - name: Build
         run: |
           corepack enable
-          echo "//npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN" > ~/.npmrc
+          # echo "//npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN" > ~/.npmrc
           yarn
           npx turbo run build
       - run: |
           pwd
+          echo "//npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN" > ~/.npmrc
+          cat ~/.npmrc
           npm publish
         working-directory: ./sdks/v4-sdk
         env:
