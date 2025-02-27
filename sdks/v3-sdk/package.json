@@ -1,7 +1,11 @@
 {
-  "name": "@uniswap/v3-sdk",
+  "name": "@treeder/uniswap-v3-sdk",
   "description": "⚒️ An SDK for building applications on top of Uniswap V3",
-  "repository": "https://github.com/Uniswap/sdks.git",
+  "version": "2.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/treeder/uniswap-sdks.git"
+  },
   "keywords": [
     "uniswap",
     "ethereum"
@@ -53,7 +57,7 @@
   },
   "publishConfig": {
     "access": "public",
-    "provenance": true
+    "registry": "https://npm.pkg.github.com"
   },
   "release": {
     "extends": "semantic-release-monorepo",

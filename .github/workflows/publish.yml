@@ -30,7 +30,17 @@ jobs:
       #     git config --global user.name "Actions"
       #     npm version patch
       #     git push --follow-tags
-      - run: |
+      - name: Publish v3
+        run: |
+          pwd
+          echo "//npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN" > ~/.npmrc
+          cat ~/.npmrc
+          npm publish
+        working-directory: ./sdks/v3-sdk
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish v4
+        run: |
           pwd
           echo "//npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN" > ~/.npmrc
           cat ~/.npmrc
