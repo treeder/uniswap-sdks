@@ -28,17 +28,17 @@
     "test": "run-s test:unit test:integration",
     "test:unit": "jest --testPathPattern src --detectOpenHandles --forceExit --testPathIgnorePatterns dist",
     "test:integration": "cd integration && yarn && yarn test",
-    "typechain": "typechain --target=ethers-v5 --out-dir src/contracts --glob ./abis/**/*.json"
+    "typechain": "typechain --target=ethers-v6 --out-dir src/contracts --glob ./abis/**/*.json"
   },
   "dependencies": {
     "@ethersproject/bytes": "^5.7.0",
     "@ethersproject/providers": "^5.7.0",
     "@uniswap/permit2-sdk": "^1.2.1",
     "@uniswap/sdk-core": "^7.5.0",
-    "ethers": "^5.7.0"
+    "ethers": "^6.13.5"
   },
   "devDependencies": {
-    "@typechain/ethers-v5": "^10.1.0",
+    "@typechain/ethers-v6": "^0.5.1",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.13.5",
     "@typescript-eslint/eslint-plugin": "^8.25.0",
