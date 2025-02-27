@@ -3,89 +3,87 @@
 /* eslint-disable */
 import type {
   BaseContract,
-  BigNumber,
   BigNumberish,
   BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
+  FunctionFragment,
+  Result,
+  Interface,
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
   TypedListener,
-  OnEvent,
-  PromiseOrValue,
+  TypedContractMethod,
 } from "./common";
 
 export type OrderInfoStruct = {
-  reactor: PromiseOrValue<string>;
-  swapper: PromiseOrValue<string>;
-  nonce: PromiseOrValue<BigNumberish>;
-  deadline: PromiseOrValue<BigNumberish>;
-  additionalValidationContract: PromiseOrValue<string>;
-  additionalValidationData: PromiseOrValue<BytesLike>;
+  reactor: AddressLike;
+  swapper: AddressLike;
+  nonce: BigNumberish;
+  deadline: BigNumberish;
+  additionalValidationContract: AddressLike;
+  additionalValidationData: BytesLike;
 };
 
 export type OrderInfoStructOutput = [
-  string,
-  string,
-  BigNumber,
-  BigNumber,
-  string,
-  string
+  reactor: string,
+  swapper: string,
+  nonce: bigint,
+  deadline: bigint,
+  additionalValidationContract: string,
+  additionalValidationData: string
 ] & {
   reactor: string;
   swapper: string;
-  nonce: BigNumber;
-  deadline: BigNumber;
+  nonce: bigint;
+  deadline: bigint;
   additionalValidationContract: string;
   additionalValidationData: string;
 };
 
 export type InputTokenStruct = {
-  token: PromiseOrValue<string>;
-  amount: PromiseOrValue<BigNumberish>;
-  maxAmount: PromiseOrValue<BigNumberish>;
+  token: AddressLike;
+  amount: BigNumberish;
+  maxAmount: BigNumberish;
 };
 
-export type InputTokenStructOutput = [string, BigNumber, BigNumber] & {
-  token: string;
-  amount: BigNumber;
-  maxAmount: BigNumber;
-};
+export type InputTokenStructOutput = [
+  token: string,
+  amount: bigint,
+  maxAmount: bigint
+] & { token: string; amount: bigint; maxAmount: bigint };
 
 export type OutputTokenStruct = {
-  token: PromiseOrValue<string>;
-  amount: PromiseOrValue<BigNumberish>;
-  recipient: PromiseOrValue<string>;
+  token: AddressLike;
+  amount: BigNumberish;
+  recipient: AddressLike;
 };
 
-export type OutputTokenStructOutput = [string, BigNumber, string] & {
-  token: string;
-  amount: BigNumber;
-  recipient: string;
-};
+export type OutputTokenStructOutput = [
+  token: string,
+  amount: bigint,
+  recipient: string
+] & { token: string; amount: bigint; recipient: string };
 
 export type ResolvedOrderStruct = {
   info: OrderInfoStruct;
   input: InputTokenStruct;
   outputs: OutputTokenStruct[];
-  sig: PromiseOrValue<BytesLike>;
-  hash: PromiseOrValue<BytesLike>;
+  sig: BytesLike;
+  hash: BytesLike;
 };
 
 export type ResolvedOrderStructOutput = [
-  OrderInfoStructOutput,
-  InputTokenStructOutput,
-  OutputTokenStructOutput[],
-  string,
-  string
+  info: OrderInfoStructOutput,
+  input: InputTokenStructOutput,
+  outputs: OutputTokenStructOutput[],
+  sig: string,
+  hash: string
 ] & {
   info: OrderInfoStructOutput;
   input: InputTokenStructOutput;
@@ -94,28 +92,22 @@ export type ResolvedOrderStructOutput = [
   hash: string;
 };
 
-export interface OrderQuoterInterface extends utils.Interface {
-  functions: {
-    "getReactor(bytes)": FunctionFragment;
-    "quote(bytes,bytes)": FunctionFragment;
-    "reactorCallback(((address,address,uint256,uint256,address,bytes),(address,uint256,uint256),(address,uint256,address)[],bytes,bytes32)[],bytes)": FunctionFragment;
-  };
-
+export interface OrderQuoterInterface extends Interface {
   getFunction(
-    nameOrSignatureOrTopic: "getReactor" | "quote" | "reactorCallback"
+    nameOrSignature: "getReactor" | "quote" | "reactorCallback"
   ): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "getReactor",
-    values: [PromiseOrValue<BytesLike>]
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "quote",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BytesLike>]
+    values: [BytesLike, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "reactorCallback",
-    values: [ResolvedOrderStruct[], PromiseOrValue<BytesLike>]
+    values: [ResolvedOrderStruct[], BytesLike]
   ): string;
 
   decodeFunctionResult(functionFragment: "getReactor", data: BytesLike): Result;
@@ -124,128 +116,86 @@ export interface OrderQuoterInterface extends utils.Interface {
     functionFragment: "reactorCallback",
     data: BytesLike
   ): Result;
-
-  events: {};
 }
 
 export interface OrderQuoter extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): OrderQuoter;
+  waitForDeployment(): Promise<this>;
 
   interface: OrderQuoterInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  functions: {
-    getReactor(
-      order: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[string] & { reactor: string }>;
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-    quote(
-      order: PromiseOrValue<BytesLike>,
-      sig: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
 
-    reactorCallback(
-      resolvedOrders: ResolvedOrderStruct[],
-      arg1: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-  };
+  getReactor: TypedContractMethod<[order: BytesLike], [string], "view">;
 
-  getReactor(
-    order: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<string>;
+  quote: TypedContractMethod<
+    [order: BytesLike, sig: BytesLike],
+    [ResolvedOrderStructOutput],
+    "nonpayable"
+  >;
 
-  quote(
-    order: PromiseOrValue<BytesLike>,
-    sig: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  reactorCallback: TypedContractMethod<
+    [resolvedOrders: ResolvedOrderStruct[], arg1: BytesLike],
+    [void],
+    "view"
+  >;
 
-  reactorCallback(
-    resolvedOrders: ResolvedOrderStruct[],
-    arg1: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<void>;
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
 
-  callStatic: {
-    getReactor(
-      order: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    quote(
-      order: PromiseOrValue<BytesLike>,
-      sig: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<ResolvedOrderStructOutput>;
-
-    reactorCallback(
-      resolvedOrders: ResolvedOrderStruct[],
-      arg1: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-  };
+  getFunction(
+    nameOrSignature: "getReactor"
+  ): TypedContractMethod<[order: BytesLike], [string], "view">;
+  getFunction(
+    nameOrSignature: "quote"
+  ): TypedContractMethod<
+    [order: BytesLike, sig: BytesLike],
+    [ResolvedOrderStructOutput],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "reactorCallback"
+  ): TypedContractMethod<
+    [resolvedOrders: ResolvedOrderStruct[], arg1: BytesLike],
+    [void],
+    "view"
+  >;
 
   filters: {};
-
-  estimateGas: {
-    getReactor(
-      order: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    quote(
-      order: PromiseOrValue<BytesLike>,
-      sig: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    reactorCallback(
-      resolvedOrders: ResolvedOrderStruct[],
-      arg1: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    getReactor(
-      order: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    quote(
-      order: PromiseOrValue<BytesLike>,
-      sig: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    reactorCallback(
-      resolvedOrders: ResolvedOrderStruct[],
-      arg1: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-  };
 }

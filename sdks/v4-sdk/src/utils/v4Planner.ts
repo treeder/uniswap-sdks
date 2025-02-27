@@ -1,6 +1,5 @@
 import invariant from 'tiny-invariant'
-import { defaultAbiCoder } from 'ethers/lib/utils'
-import { BigNumber } from 'ethers'
+import { AbiCoder } from 'ethers'
 import { Currency, Percent, TradeType } from '@uniswap/sdk-core'
 import { Trade } from '../entities/trade'
 import { ADDRESS_ZERO, EMPTY_BYTES } from '../internalConstants'
@@ -196,39 +195,39 @@ export class V4Planner {
     this.addAction(actionType, [
       exactOutput
         ? {
-            currencyOut,
-            path: encodeRouteToPath(trade.route, exactOutput),
-            amountInMaximum: trade.maximumAmountIn(slippageTolerance ?? new Percent(0)).quotient.toString(),
-            amountOut: trade.outputAmount.quotient.toString(),
-          }
+          currencyOut,
+          path: encodeRouteToPath(trade.route, exactOutput),
+          amountInMaximum: trade.maximumAmountIn(slippageTolerance ?? new Percent(0)).quotient.toString(),
+          amountOut: trade.outputAmount.quotient.toString(),
+        }
         : {
-            currencyIn,
-            path: encodeRouteToPath(trade.route, exactOutput),
-            amountIn: trade.inputAmount.quotient.toString(),
-            amountOutMinimum: slippageTolerance ? trade.minimumAmountOut(slippageTolerance).quotient.toString() : 0,
-          },
+          currencyIn,
+          path: encodeRouteToPath(trade.route, exactOutput),
+          amountIn: trade.inputAmount.quotient.toString(),
+          amountOutMinimum: slippageTolerance ? trade.minimumAmountOut(slippageTolerance).quotient.toString() : 0,
+        },
     ])
     return this
   }
 
-  addSettle(currency: Currency, payerIsUser: boolean, amount?: BigNumber): V4Planner {
+  addSettle(currency: Currency, payerIsUser: boolean, amount?: BigInt): V4Planner {
     this.addAction(Actions.SETTLE, [currencyAddress(currency), amount ?? FULL_DELTA_AMOUNT, payerIsUser])
     return this
   }
 
-  addTake(currency: Currency, recipient: string, amount?: BigNumber): V4Planner {
+  addTake(currency: Currency, recipient: string, amount?: BigInt): V4Planner {
     const takeAmount = amount ?? FULL_DELTA_AMOUNT
     this.addAction(Actions.TAKE, [currencyAddress(currency), recipient, takeAmount])
     return this
   }
 
-  addUnwrap(amount: BigNumber): V4Planner {
+  addUnwrap(amount: BigInt): V4Planner {
     this.addAction(Actions.UNWRAP, [amount])
     return this
   }
 
   finalize(): string {
-    return defaultAbiCoder.encode(['bytes', 'bytes[]'], [this.actions, this.params])
+    return AbiCoder.defaultAbiCoder.encode(['bytes', 'bytes[]'], [this.actions, this.params])
   }
 }
 
@@ -242,7 +241,7 @@ type RouterAction = {
 }
 
 function createAction(action: Actions, parameters: any[]): RouterAction {
-  const encodedInput = defaultAbiCoder.encode(
+  const encodedInput = AbiCoder.defaultAbiCoder.encode(
     V4_BASE_ACTIONS_ABI_DEFINITION[action].map((v) => v.type),
     parameters
   )

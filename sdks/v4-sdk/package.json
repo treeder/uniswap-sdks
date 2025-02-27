@@ -1,7 +1,10 @@
 {
   "name": "@uniswap/v4-sdk",
   "description": "⚒️ An SDK for building applications on top of Uniswap V4",
-  "repository": "https://github.com/Uniswap/sdks.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/treeder/uniswap-sdks.git"
+  },
   "keywords": [
     "uniswap",
     "ethereum"

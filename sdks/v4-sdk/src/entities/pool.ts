@@ -10,7 +10,7 @@ import {
   TickListDataProvider,
   TickMath,
 } from '@uniswap/v3-sdk'
-import { defaultAbiCoder, isAddress } from 'ethers/lib/utils'
+import { AbiCoder, isAddress } from 'ethers'
 import { sortsBefore } from '../utils/sortsBefore'
 import { Hook } from '../utils/hook'
 import { ADDRESS_ZERO, NEGATIVE_ONE, Q192 } from '../internalConstants'
@@ -81,7 +81,7 @@ export class Pool {
     return keccak256(
       ['bytes'],
       [
-        defaultAbiCoder.encode(
+        AbiCoder.defaultAbiCoder.encode(
           ['address', 'address', 'uint24', 'int24', 'address'],
           [currency0Addr, currency1Addr, fee, tickSpacing, hooks]
         ),
@@ -120,14 +120,14 @@ export class Pool {
     const nextTickSqrtRatioX96 = TickMath.getSqrtRatioAtTick(tickCurrent + 1)
     invariant(
       JSBI.greaterThanOrEqual(JSBI.BigInt(sqrtRatioX96), tickCurrentSqrtRatioX96) &&
-        JSBI.lessThanOrEqual(JSBI.BigInt(sqrtRatioX96), nextTickSqrtRatioX96),
+      JSBI.lessThanOrEqual(JSBI.BigInt(sqrtRatioX96), nextTickSqrtRatioX96),
       'PRICE_BOUNDS'
     )
 
-    // always create a copy of the list since we want the pool's tick list to be immutable
-    ;[this.currency0, this.currency1] = sortsBefore(currencyA, currencyB)
-      ? [currencyA, currencyB]
-      : [currencyB, currencyA]
+      // always create a copy of the list since we want the pool's tick list to be immutable
+      ;[this.currency0, this.currency1] = sortsBefore(currencyA, currencyB)
+        ? [currencyA, currencyB]
+        : [currencyB, currencyA]
     this.fee = fee
     this.sqrtRatioX96 = JSBI.BigInt(sqrtRatioX96)
     this.tickSpacing = tickSpacing

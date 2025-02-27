@@ -3,52 +3,36 @@
 /* eslint-disable */
 import type {
   BaseContract,
-  BigNumber,
   BigNumberish,
   BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import type {
   FunctionFragment,
   Result,
+  Interface,
   EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
+} from "ethers";
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
+  TypedLogDescription,
   TypedListener,
-  OnEvent,
-  PromiseOrValue,
+  TypedContractMethod,
 } from "./common";
 
-export type SignedOrderStruct = {
-  order: PromiseOrValue<BytesLike>;
-  sig: PromiseOrValue<BytesLike>;
-};
+export type SignedOrderStruct = { order: BytesLike; sig: BytesLike };
 
-export type SignedOrderStructOutput = [string, string] & {
+export type SignedOrderStructOutput = [order: string, sig: string] & {
   order: string;
   sig: string;
 };
 
-export interface RelayOrderReactorInterface extends utils.Interface {
-  functions: {
-    "PERMIT2()": FunctionFragment;
-    "execute((bytes,bytes))": FunctionFragment;
-    "execute((bytes,bytes),address)": FunctionFragment;
-    "multicall(bytes[])": FunctionFragment;
-    "permit(address,address,address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
-    "universalRouter()": FunctionFragment;
-  };
-
+export interface RelayOrderReactorInterface extends Interface {
   getFunction(
-    nameOrSignatureOrTopic:
+    nameOrSignature:
       | "PERMIT2"
       | "execute((bytes,bytes))"
       | "execute((bytes,bytes),address)"
@@ -57,6 +41,8 @@ export interface RelayOrderReactorInterface extends utils.Interface {
       | "universalRouter"
   ): FunctionFragment;
 
+  getEvent(nameOrSignatureOrTopic: "Relay"): EventFragment;
+
   encodeFunctionData(functionFragment: "PERMIT2", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "execute((bytes,bytes))",
@@ -64,23 +50,23 @@ export interface RelayOrderReactorInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "execute((bytes,bytes),address)",
-    values: [SignedOrderStruct, PromiseOrValue<string>]
+    values: [SignedOrderStruct, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "multicall",
-    values: [PromiseOrValue<BytesLike>[]]
+    values: [BytesLike[]]
   ): string;
   encodeFunctionData(
     functionFragment: "permit",
     values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BytesLike>,
-      PromiseOrValue<BytesLike>
+      AddressLike,
+      AddressLike,
+      AddressLike,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BytesLike,
+      BytesLike
     ]
   ): string;
   encodeFunctionData(
@@ -103,233 +89,171 @@ export interface RelayOrderReactorInterface extends utils.Interface {
     functionFragment: "universalRouter",
     data: BytesLike
   ): Result;
-
-  events: {
-    "Relay(bytes32,address,address,uint256)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "Relay"): EventFragment;
 }
 
-export interface RelayEventObject {
-  orderHash: string;
-  filler: string;
-  swapper: string;
-  nonce: BigNumber;
+export namespace RelayEvent {
+  export type InputTuple = [
+    orderHash: BytesLike,
+    filler: AddressLike,
+    swapper: AddressLike,
+    nonce: BigNumberish
+  ];
+  export type OutputTuple = [
+    orderHash: string,
+    filler: string,
+    swapper: string,
+    nonce: bigint
+  ];
+  export interface OutputObject {
+    orderHash: string;
+    filler: string;
+    swapper: string;
+    nonce: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RelayEvent = TypedEvent<
-  [string, string, string, BigNumber],
-  RelayEventObject
->;
-
-export type RelayEventFilter = TypedEventFilter<RelayEvent>;
 
 export interface RelayOrderReactor extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): RelayOrderReactor;
+  waitForDeployment(): Promise<this>;
 
   interface: RelayOrderReactorInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  functions: {
-    PERMIT2(overrides?: CallOverrides): Promise<[string]>;
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-    "execute((bytes,bytes))"(
-      signedOrder: SignedOrderStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
 
-    "execute((bytes,bytes),address)"(
-      signedOrder: SignedOrderStruct,
-      feeRecipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  PERMIT2: TypedContractMethod<[], [string], "view">;
 
-    multicall(
-      data: PromiseOrValue<BytesLike>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  "execute((bytes,bytes))": TypedContractMethod<
+    [signedOrder: SignedOrderStruct],
+    [void],
+    "nonpayable"
+  >;
 
-    permit(
-      token: PromiseOrValue<string>,
-      owner: PromiseOrValue<string>,
-      spender: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      deadline: PromiseOrValue<BigNumberish>,
-      v: PromiseOrValue<BigNumberish>,
-      r: PromiseOrValue<BytesLike>,
-      s: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  "execute((bytes,bytes),address)": TypedContractMethod<
+    [signedOrder: SignedOrderStruct, feeRecipient: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-    universalRouter(overrides?: CallOverrides): Promise<[string]>;
-  };
+  multicall: TypedContractMethod<[data: BytesLike[]], [string[]], "nonpayable">;
 
-  PERMIT2(overrides?: CallOverrides): Promise<string>;
+  permit: TypedContractMethod<
+    [
+      token: AddressLike,
+      owner: AddressLike,
+      spender: AddressLike,
+      amount: BigNumberish,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike
+    ],
+    [void],
+    "nonpayable"
+  >;
 
-  "execute((bytes,bytes))"(
-    signedOrder: SignedOrderStruct,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  universalRouter: TypedContractMethod<[], [string], "view">;
 
-  "execute((bytes,bytes),address)"(
-    signedOrder: SignedOrderStruct,
-    feeRecipient: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
 
-  multicall(
-    data: PromiseOrValue<BytesLike>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  getFunction(
+    nameOrSignature: "PERMIT2"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "execute((bytes,bytes))"
+  ): TypedContractMethod<
+    [signedOrder: SignedOrderStruct],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "execute((bytes,bytes),address)"
+  ): TypedContractMethod<
+    [signedOrder: SignedOrderStruct, feeRecipient: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "multicall"
+  ): TypedContractMethod<[data: BytesLike[]], [string[]], "nonpayable">;
+  getFunction(
+    nameOrSignature: "permit"
+  ): TypedContractMethod<
+    [
+      token: AddressLike,
+      owner: AddressLike,
+      spender: AddressLike,
+      amount: BigNumberish,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike
+    ],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "universalRouter"
+  ): TypedContractMethod<[], [string], "view">;
 
-  permit(
-    token: PromiseOrValue<string>,
-    owner: PromiseOrValue<string>,
-    spender: PromiseOrValue<string>,
-    amount: PromiseOrValue<BigNumberish>,
-    deadline: PromiseOrValue<BigNumberish>,
-    v: PromiseOrValue<BigNumberish>,
-    r: PromiseOrValue<BytesLike>,
-    s: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  universalRouter(overrides?: CallOverrides): Promise<string>;
-
-  callStatic: {
-    PERMIT2(overrides?: CallOverrides): Promise<string>;
-
-    "execute((bytes,bytes))"(
-      signedOrder: SignedOrderStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "execute((bytes,bytes),address)"(
-      signedOrder: SignedOrderStruct,
-      feeRecipient: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    multicall(
-      data: PromiseOrValue<BytesLike>[],
-      overrides?: CallOverrides
-    ): Promise<string[]>;
-
-    permit(
-      token: PromiseOrValue<string>,
-      owner: PromiseOrValue<string>,
-      spender: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      deadline: PromiseOrValue<BigNumberish>,
-      v: PromiseOrValue<BigNumberish>,
-      r: PromiseOrValue<BytesLike>,
-      s: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    universalRouter(overrides?: CallOverrides): Promise<string>;
-  };
+  getEvent(
+    key: "Relay"
+  ): TypedContractEvent<
+    RelayEvent.InputTuple,
+    RelayEvent.OutputTuple,
+    RelayEvent.OutputObject
+  >;
 
   filters: {
-    "Relay(bytes32,address,address,uint256)"(
-      orderHash?: PromiseOrValue<BytesLike> | null,
-      filler?: PromiseOrValue<string> | null,
-      swapper?: PromiseOrValue<string> | null,
-      nonce?: null
-    ): RelayEventFilter;
-    Relay(
-      orderHash?: PromiseOrValue<BytesLike> | null,
-      filler?: PromiseOrValue<string> | null,
-      swapper?: PromiseOrValue<string> | null,
-      nonce?: null
-    ): RelayEventFilter;
-  };
-
-  estimateGas: {
-    PERMIT2(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "execute((bytes,bytes))"(
-      signedOrder: SignedOrderStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "execute((bytes,bytes),address)"(
-      signedOrder: SignedOrderStruct,
-      feeRecipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    multicall(
-      data: PromiseOrValue<BytesLike>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    permit(
-      token: PromiseOrValue<string>,
-      owner: PromiseOrValue<string>,
-      spender: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      deadline: PromiseOrValue<BigNumberish>,
-      v: PromiseOrValue<BigNumberish>,
-      r: PromiseOrValue<BytesLike>,
-      s: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    universalRouter(overrides?: CallOverrides): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    PERMIT2(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "execute((bytes,bytes))"(
-      signedOrder: SignedOrderStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "execute((bytes,bytes),address)"(
-      signedOrder: SignedOrderStruct,
-      feeRecipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    multicall(
-      data: PromiseOrValue<BytesLike>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    permit(
-      token: PromiseOrValue<string>,
-      owner: PromiseOrValue<string>,
-      spender: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      deadline: PromiseOrValue<BigNumberish>,
-      v: PromiseOrValue<BigNumberish>,
-      r: PromiseOrValue<BytesLike>,
-      s: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    universalRouter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    "Relay(bytes32,address,address,uint256)": TypedContractEvent<
+      RelayEvent.InputTuple,
+      RelayEvent.OutputTuple,
+      RelayEvent.OutputObject
+    >;
+    Relay: TypedContractEvent<
+      RelayEvent.InputTuple,
+      RelayEvent.OutputTuple,
+      RelayEvent.OutputObject
+    >;
   };
 }

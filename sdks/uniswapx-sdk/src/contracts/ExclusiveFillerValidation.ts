@@ -3,87 +3,87 @@
 /* eslint-disable */
 import type {
   BaseContract,
-  BigNumber,
   BigNumberish,
   BytesLike,
-  CallOverrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
+  FunctionFragment,
+  Result,
+  Interface,
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
   TypedListener,
-  OnEvent,
-  PromiseOrValue,
+  TypedContractMethod,
 } from "./common";
 
 export type OrderInfoStruct = {
-  reactor: PromiseOrValue<string>;
-  swapper: PromiseOrValue<string>;
-  nonce: PromiseOrValue<BigNumberish>;
-  deadline: PromiseOrValue<BigNumberish>;
-  additionalValidationContract: PromiseOrValue<string>;
-  additionalValidationData: PromiseOrValue<BytesLike>;
+  reactor: AddressLike;
+  swapper: AddressLike;
+  nonce: BigNumberish;
+  deadline: BigNumberish;
+  additionalValidationContract: AddressLike;
+  additionalValidationData: BytesLike;
 };
 
 export type OrderInfoStructOutput = [
-  string,
-  string,
-  BigNumber,
-  BigNumber,
-  string,
-  string
+  reactor: string,
+  swapper: string,
+  nonce: bigint,
+  deadline: bigint,
+  additionalValidationContract: string,
+  additionalValidationData: string
 ] & {
   reactor: string;
   swapper: string;
-  nonce: BigNumber;
-  deadline: BigNumber;
+  nonce: bigint;
+  deadline: bigint;
   additionalValidationContract: string;
   additionalValidationData: string;
 };
 
 export type InputTokenStruct = {
-  token: PromiseOrValue<string>;
-  amount: PromiseOrValue<BigNumberish>;
-  maxAmount: PromiseOrValue<BigNumberish>;
+  token: AddressLike;
+  amount: BigNumberish;
+  maxAmount: BigNumberish;
 };
 
-export type InputTokenStructOutput = [string, BigNumber, BigNumber] & {
-  token: string;
-  amount: BigNumber;
-  maxAmount: BigNumber;
-};
+export type InputTokenStructOutput = [
+  token: string,
+  amount: bigint,
+  maxAmount: bigint
+] & { token: string; amount: bigint; maxAmount: bigint };
 
 export type OutputTokenStruct = {
-  token: PromiseOrValue<string>;
-  amount: PromiseOrValue<BigNumberish>;
-  recipient: PromiseOrValue<string>;
+  token: AddressLike;
+  amount: BigNumberish;
+  recipient: AddressLike;
 };
 
-export type OutputTokenStructOutput = [string, BigNumber, string] & {
-  token: string;
-  amount: BigNumber;
-  recipient: string;
-};
+export type OutputTokenStructOutput = [
+  token: string,
+  amount: bigint,
+  recipient: string
+] & { token: string; amount: bigint; recipient: string };
 
 export type ResolvedOrderStruct = {
   info: OrderInfoStruct;
   input: InputTokenStruct;
   outputs: OutputTokenStruct[];
-  sig: PromiseOrValue<BytesLike>;
-  hash: PromiseOrValue<BytesLike>;
+  sig: BytesLike;
+  hash: BytesLike;
 };
 
 export type ResolvedOrderStructOutput = [
-  OrderInfoStructOutput,
-  InputTokenStructOutput,
-  OutputTokenStructOutput[],
-  string,
-  string
+  info: OrderInfoStructOutput,
+  input: InputTokenStructOutput,
+  outputs: OutputTokenStructOutput[],
+  sig: string,
+  hash: string
 ] & {
   info: OrderInfoStructOutput;
   input: InputTokenStructOutput;
@@ -92,86 +92,77 @@ export type ResolvedOrderStructOutput = [
   hash: string;
 };
 
-export interface ExclusiveFillerValidationInterface extends utils.Interface {
-  functions: {
-    "validate(address,((address,address,uint256,uint256,address,bytes),(address,uint256,uint256),(address,uint256,address)[],bytes,bytes32))": FunctionFragment;
-  };
-
-  getFunction(nameOrSignatureOrTopic: "validate"): FunctionFragment;
+export interface ExclusiveFillerValidationInterface extends Interface {
+  getFunction(nameOrSignature: "validate"): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "validate",
-    values: [PromiseOrValue<string>, ResolvedOrderStruct]
+    values: [AddressLike, ResolvedOrderStruct]
   ): string;
 
   decodeFunctionResult(functionFragment: "validate", data: BytesLike): Result;
-
-  events: {};
 }
 
 export interface ExclusiveFillerValidation extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): ExclusiveFillerValidation;
+  waitForDeployment(): Promise<this>;
 
   interface: ExclusiveFillerValidationInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  functions: {
-    validate(
-      filler: PromiseOrValue<string>,
-      resolvedOrder: ResolvedOrderStruct,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-  };
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  validate(
-    filler: PromiseOrValue<string>,
-    resolvedOrder: ResolvedOrderStruct,
-    overrides?: CallOverrides
-  ): Promise<void>;
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
 
-  callStatic: {
-    validate(
-      filler: PromiseOrValue<string>,
-      resolvedOrder: ResolvedOrderStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-  };
+  validate: TypedContractMethod<
+    [filler: AddressLike, resolvedOrder: ResolvedOrderStruct],
+    [void],
+    "view"
+  >;
+
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
+
+  getFunction(
+    nameOrSignature: "validate"
+  ): TypedContractMethod<
+    [filler: AddressLike, resolvedOrder: ResolvedOrderStruct],
+    [void],
+    "view"
+  >;
 
   filters: {};
-
-  estimateGas: {
-    validate(
-      filler: PromiseOrValue<string>,
-      resolvedOrder: ResolvedOrderStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    validate(
-      filler: PromiseOrValue<string>,
-      resolvedOrder: ResolvedOrderStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-  };
 }

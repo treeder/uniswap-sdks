@@ -3,55 +3,36 @@
 /* eslint-disable */
 import type {
   BaseContract,
-  BigNumber,
+  BigNumberish,
   BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PayableOverrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import type {
   FunctionFragment,
   Result,
+  Interface,
   EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
+} from "ethers";
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
+  TypedLogDescription,
   TypedListener,
-  OnEvent,
-  PromiseOrValue,
+  TypedContractMethod,
 } from "./common";
 
-export type SignedOrderStruct = {
-  order: PromiseOrValue<BytesLike>;
-  sig: PromiseOrValue<BytesLike>;
-};
+export type SignedOrderStruct = { order: BytesLike; sig: BytesLike };
 
-export type SignedOrderStructOutput = [string, string] & {
+export type SignedOrderStructOutput = [order: string, sig: string] & {
   order: string;
   sig: string;
 };
 
-export interface V3DutchOrderReactorInterface extends utils.Interface {
-  functions: {
-    "execute((bytes,bytes))": FunctionFragment;
-    "executeBatch((bytes,bytes)[])": FunctionFragment;
-    "executeBatchWithCallback((bytes,bytes)[],bytes)": FunctionFragment;
-    "executeWithCallback((bytes,bytes),bytes)": FunctionFragment;
-    "feeController()": FunctionFragment;
-    "owner()": FunctionFragment;
-    "permit2()": FunctionFragment;
-    "setProtocolFeeController(address)": FunctionFragment;
-    "transferOwnership(address)": FunctionFragment;
-  };
-
+export interface V3DutchOrderReactorInterface extends Interface {
   getFunction(
-    nameOrSignatureOrTopic:
+    nameOrSignature:
       | "execute"
       | "executeBatch"
       | "executeBatchWithCallback"
@@ -63,6 +44,13 @@ export interface V3DutchOrderReactorInterface extends utils.Interface {
       | "transferOwnership"
   ): FunctionFragment;
 
+  getEvent(
+    nameOrSignatureOrTopic:
+      | "Fill"
+      | "OwnershipTransferred"
+      | "ProtocolFeeControllerSet"
+  ): EventFragment;
+
   encodeFunctionData(
     functionFragment: "execute",
     values: [SignedOrderStruct]
@@ -73,11 +61,11 @@ export interface V3DutchOrderReactorInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "executeBatchWithCallback",
-    values: [SignedOrderStruct[], PromiseOrValue<BytesLike>]
+    values: [SignedOrderStruct[], BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "executeWithCallback",
-    values: [SignedOrderStruct, PromiseOrValue<BytesLike>]
+    values: [SignedOrderStruct, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "feeController",
@@ -87,11 +75,11 @@ export interface V3DutchOrderReactorInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "permit2", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "setProtocolFeeController",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
 
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
@@ -121,306 +109,244 @@ export interface V3DutchOrderReactorInterface extends utils.Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
-
-  events: {
-    "Fill(bytes32,address,address,uint256)": EventFragment;
-    "OwnershipTransferred(address,address)": EventFragment;
-    "ProtocolFeeControllerSet(address,address)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "Fill"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ProtocolFeeControllerSet"): EventFragment;
 }
 
-export interface FillEventObject {
-  orderHash: string;
-  filler: string;
-  swapper: string;
-  nonce: BigNumber;
+export namespace FillEvent {
+  export type InputTuple = [
+    orderHash: BytesLike,
+    filler: AddressLike,
+    swapper: AddressLike,
+    nonce: BigNumberish
+  ];
+  export type OutputTuple = [
+    orderHash: string,
+    filler: string,
+    swapper: string,
+    nonce: bigint
+  ];
+  export interface OutputObject {
+    orderHash: string;
+    filler: string;
+    swapper: string;
+    nonce: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type FillEvent = TypedEvent<
-  [string, string, string, BigNumber],
-  FillEventObject
->;
 
-export type FillEventFilter = TypedEventFilter<FillEvent>;
-
-export interface OwnershipTransferredEventObject {
-  user: string;
-  newOwner: string;
+export namespace OwnershipTransferredEvent {
+  export type InputTuple = [user: AddressLike, newOwner: AddressLike];
+  export type OutputTuple = [user: string, newOwner: string];
+  export interface OutputObject {
+    user: string;
+    newOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type OwnershipTransferredEvent = TypedEvent<
-  [string, string],
-  OwnershipTransferredEventObject
->;
 
-export type OwnershipTransferredEventFilter =
-  TypedEventFilter<OwnershipTransferredEvent>;
-
-export interface ProtocolFeeControllerSetEventObject {
-  oldFeeController: string;
-  newFeeController: string;
+export namespace ProtocolFeeControllerSetEvent {
+  export type InputTuple = [
+    oldFeeController: AddressLike,
+    newFeeController: AddressLike
+  ];
+  export type OutputTuple = [
+    oldFeeController: string,
+    newFeeController: string
+  ];
+  export interface OutputObject {
+    oldFeeController: string;
+    newFeeController: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type ProtocolFeeControllerSetEvent = TypedEvent<
-  [string, string],
-  ProtocolFeeControllerSetEventObject
->;
-
-export type ProtocolFeeControllerSetEventFilter =
-  TypedEventFilter<ProtocolFeeControllerSetEvent>;
 
 export interface V3DutchOrderReactor extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): V3DutchOrderReactor;
+  waitForDeployment(): Promise<this>;
 
   interface: V3DutchOrderReactorInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  functions: {
-    execute(
-      order: SignedOrderStruct,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-    executeBatch(
-      orders: SignedOrderStruct[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
 
-    executeBatchWithCallback(
-      orders: SignedOrderStruct[],
-      callbackData: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  execute: TypedContractMethod<[order: SignedOrderStruct], [void], "payable">;
 
-    executeWithCallback(
-      order: SignedOrderStruct,
-      callbackData: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  executeBatch: TypedContractMethod<
+    [orders: SignedOrderStruct[]],
+    [void],
+    "payable"
+  >;
 
-    feeController(overrides?: CallOverrides): Promise<[string]>;
+  executeBatchWithCallback: TypedContractMethod<
+    [orders: SignedOrderStruct[], callbackData: BytesLike],
+    [void],
+    "payable"
+  >;
 
-    owner(overrides?: CallOverrides): Promise<[string]>;
+  executeWithCallback: TypedContractMethod<
+    [order: SignedOrderStruct, callbackData: BytesLike],
+    [void],
+    "payable"
+  >;
 
-    permit2(overrides?: CallOverrides): Promise<[string]>;
+  feeController: TypedContractMethod<[], [string], "view">;
 
-    setProtocolFeeController(
-      _newFeeController: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  owner: TypedContractMethod<[], [string], "view">;
 
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-  };
+  permit2: TypedContractMethod<[], [string], "view">;
 
-  execute(
-    order: SignedOrderStruct,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  setProtocolFeeController: TypedContractMethod<
+    [_newFeeController: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-  executeBatch(
-    orders: SignedOrderStruct[],
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  transferOwnership: TypedContractMethod<
+    [newOwner: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-  executeBatchWithCallback(
-    orders: SignedOrderStruct[],
-    callbackData: PromiseOrValue<BytesLike>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
 
-  executeWithCallback(
-    order: SignedOrderStruct,
-    callbackData: PromiseOrValue<BytesLike>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  getFunction(
+    nameOrSignature: "execute"
+  ): TypedContractMethod<[order: SignedOrderStruct], [void], "payable">;
+  getFunction(
+    nameOrSignature: "executeBatch"
+  ): TypedContractMethod<[orders: SignedOrderStruct[]], [void], "payable">;
+  getFunction(
+    nameOrSignature: "executeBatchWithCallback"
+  ): TypedContractMethod<
+    [orders: SignedOrderStruct[], callbackData: BytesLike],
+    [void],
+    "payable"
+  >;
+  getFunction(
+    nameOrSignature: "executeWithCallback"
+  ): TypedContractMethod<
+    [order: SignedOrderStruct, callbackData: BytesLike],
+    [void],
+    "payable"
+  >;
+  getFunction(
+    nameOrSignature: "feeController"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "owner"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "permit2"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "setProtocolFeeController"
+  ): TypedContractMethod<
+    [_newFeeController: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "transferOwnership"
+  ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
 
-  feeController(overrides?: CallOverrides): Promise<string>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  permit2(overrides?: CallOverrides): Promise<string>;
-
-  setProtocolFeeController(
-    _newFeeController: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  transferOwnership(
-    newOwner: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  callStatic: {
-    execute(order: SignedOrderStruct, overrides?: CallOverrides): Promise<void>;
-
-    executeBatch(
-      orders: SignedOrderStruct[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    executeBatchWithCallback(
-      orders: SignedOrderStruct[],
-      callbackData: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    executeWithCallback(
-      order: SignedOrderStruct,
-      callbackData: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    feeController(overrides?: CallOverrides): Promise<string>;
-
-    owner(overrides?: CallOverrides): Promise<string>;
-
-    permit2(overrides?: CallOverrides): Promise<string>;
-
-    setProtocolFeeController(
-      _newFeeController: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-  };
+  getEvent(
+    key: "Fill"
+  ): TypedContractEvent<
+    FillEvent.InputTuple,
+    FillEvent.OutputTuple,
+    FillEvent.OutputObject
+  >;
+  getEvent(
+    key: "OwnershipTransferred"
+  ): TypedContractEvent<
+    OwnershipTransferredEvent.InputTuple,
+    OwnershipTransferredEvent.OutputTuple,
+    OwnershipTransferredEvent.OutputObject
+  >;
+  getEvent(
+    key: "ProtocolFeeControllerSet"
+  ): TypedContractEvent<
+    ProtocolFeeControllerSetEvent.InputTuple,
+    ProtocolFeeControllerSetEvent.OutputTuple,
+    ProtocolFeeControllerSetEvent.OutputObject
+  >;
 
   filters: {
-    "Fill(bytes32,address,address,uint256)"(
-      orderHash?: PromiseOrValue<BytesLike> | null,
-      filler?: PromiseOrValue<string> | null,
-      swapper?: PromiseOrValue<string> | null,
-      nonce?: null
-    ): FillEventFilter;
-    Fill(
-      orderHash?: PromiseOrValue<BytesLike> | null,
-      filler?: PromiseOrValue<string> | null,
-      swapper?: PromiseOrValue<string> | null,
-      nonce?: null
-    ): FillEventFilter;
+    "Fill(bytes32,address,address,uint256)": TypedContractEvent<
+      FillEvent.InputTuple,
+      FillEvent.OutputTuple,
+      FillEvent.OutputObject
+    >;
+    Fill: TypedContractEvent<
+      FillEvent.InputTuple,
+      FillEvent.OutputTuple,
+      FillEvent.OutputObject
+    >;
 
-    "OwnershipTransferred(address,address)"(
-      user?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnershipTransferredEventFilter;
-    OwnershipTransferred(
-      user?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnershipTransferredEventFilter;
+    "OwnershipTransferred(address,address)": TypedContractEvent<
+      OwnershipTransferredEvent.InputTuple,
+      OwnershipTransferredEvent.OutputTuple,
+      OwnershipTransferredEvent.OutputObject
+    >;
+    OwnershipTransferred: TypedContractEvent<
+      OwnershipTransferredEvent.InputTuple,
+      OwnershipTransferredEvent.OutputTuple,
+      OwnershipTransferredEvent.OutputObject
+    >;
 
-    "ProtocolFeeControllerSet(address,address)"(
-      oldFeeController?: null,
-      newFeeController?: null
-    ): ProtocolFeeControllerSetEventFilter;
-    ProtocolFeeControllerSet(
-      oldFeeController?: null,
-      newFeeController?: null
-    ): ProtocolFeeControllerSetEventFilter;
-  };
-
-  estimateGas: {
-    execute(
-      order: SignedOrderStruct,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    executeBatch(
-      orders: SignedOrderStruct[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    executeBatchWithCallback(
-      orders: SignedOrderStruct[],
-      callbackData: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    executeWithCallback(
-      order: SignedOrderStruct,
-      callbackData: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    feeController(overrides?: CallOverrides): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    permit2(overrides?: CallOverrides): Promise<BigNumber>;
-
-    setProtocolFeeController(
-      _newFeeController: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    execute(
-      order: SignedOrderStruct,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    executeBatch(
-      orders: SignedOrderStruct[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    executeBatchWithCallback(
-      orders: SignedOrderStruct[],
-      callbackData: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    executeWithCallback(
-      order: SignedOrderStruct,
-      callbackData: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    feeController(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    permit2(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    setProtocolFeeController(
-      _newFeeController: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+    "ProtocolFeeControllerSet(address,address)": TypedContractEvent<
+      ProtocolFeeControllerSetEvent.InputTuple,
+      ProtocolFeeControllerSetEvent.OutputTuple,
+      ProtocolFeeControllerSetEvent.OutputObject
+    >;
+    ProtocolFeeControllerSet: TypedContractEvent<
+      ProtocolFeeControllerSetEvent.InputTuple,
+      ProtocolFeeControllerSetEvent.OutputTuple,
+      ProtocolFeeControllerSetEvent.OutputObject
+    >;
   };
 }

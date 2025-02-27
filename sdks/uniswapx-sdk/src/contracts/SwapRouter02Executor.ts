@@ -3,103 +3,96 @@
 /* eslint-disable */
 import type {
   BaseContract,
-  BigNumber,
   BigNumberish,
   BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import type {
   FunctionFragment,
   Result,
+  Interface,
   EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
+} from "ethers";
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
+  TypedLogDescription,
   TypedListener,
-  OnEvent,
-  PromiseOrValue,
+  TypedContractMethod,
 } from "./common";
 
-export type SignedOrderStruct = {
-  order: PromiseOrValue<BytesLike>;
-  sig: PromiseOrValue<BytesLike>;
-};
+export type SignedOrderStruct = { order: BytesLike; sig: BytesLike };
 
-export type SignedOrderStructOutput = [string, string] & {
+export type SignedOrderStructOutput = [order: string, sig: string] & {
   order: string;
   sig: string;
 };
 
 export type OrderInfoStruct = {
-  reactor: PromiseOrValue<string>;
-  swapper: PromiseOrValue<string>;
-  nonce: PromiseOrValue<BigNumberish>;
-  deadline: PromiseOrValue<BigNumberish>;
-  additionalValidationContract: PromiseOrValue<string>;
-  additionalValidationData: PromiseOrValue<BytesLike>;
+  reactor: AddressLike;
+  swapper: AddressLike;
+  nonce: BigNumberish;
+  deadline: BigNumberish;
+  additionalValidationContract: AddressLike;
+  additionalValidationData: BytesLike;
 };
 
 export type OrderInfoStructOutput = [
-  string,
-  string,
-  BigNumber,
-  BigNumber,
-  string,
-  string
+  reactor: string,
+  swapper: string,
+  nonce: bigint,
+  deadline: bigint,
+  additionalValidationContract: string,
+  additionalValidationData: string
 ] & {
   reactor: string;
   swapper: string;
-  nonce: BigNumber;
-  deadline: BigNumber;
+  nonce: bigint;
+  deadline: bigint;
   additionalValidationContract: string;
   additionalValidationData: string;
 };
 
 export type InputTokenStruct = {
-  token: PromiseOrValue<string>;
-  amount: PromiseOrValue<BigNumberish>;
-  maxAmount: PromiseOrValue<BigNumberish>;
+  token: AddressLike;
+  amount: BigNumberish;
+  maxAmount: BigNumberish;
 };
 
-export type InputTokenStructOutput = [string, BigNumber, BigNumber] & {
-  token: string;
-  amount: BigNumber;
-  maxAmount: BigNumber;
-};
+export type InputTokenStructOutput = [
+  token: string,
+  amount: bigint,
+  maxAmount: bigint
+] & { token: string; amount: bigint; maxAmount: bigint };
 
 export type OutputTokenStruct = {
-  token: PromiseOrValue<string>;
-  amount: PromiseOrValue<BigNumberish>;
-  recipient: PromiseOrValue<string>;
+  token: AddressLike;
+  amount: BigNumberish;
+  recipient: AddressLike;
 };
 
-export type OutputTokenStructOutput = [string, BigNumber, string] & {
-  token: string;
-  amount: BigNumber;
-  recipient: string;
-};
+export type OutputTokenStructOutput = [
+  token: string,
+  amount: bigint,
+  recipient: string
+] & { token: string; amount: bigint; recipient: string };
 
 export type ResolvedOrderStruct = {
   info: OrderInfoStruct;
   input: InputTokenStruct;
   outputs: OutputTokenStruct[];
-  sig: PromiseOrValue<BytesLike>;
-  hash: PromiseOrValue<BytesLike>;
+  sig: BytesLike;
+  hash: BytesLike;
 };
 
 export type ResolvedOrderStructOutput = [
-  OrderInfoStructOutput,
-  InputTokenStructOutput,
-  OutputTokenStructOutput[],
-  string,
-  string
+  info: OrderInfoStructOutput,
+  input: InputTokenStructOutput,
+  outputs: OutputTokenStructOutput[],
+  sig: string,
+  hash: string
 ] & {
   info: OrderInfoStructOutput;
   input: InputTokenStructOutput;
@@ -108,20 +101,9 @@ export type ResolvedOrderStructOutput = [
   hash: string;
 };
 
-export interface SwapRouter02ExecutorInterface extends utils.Interface {
-  functions: {
-    "execute((bytes,bytes),bytes)": FunctionFragment;
-    "executeBatch((bytes,bytes)[],bytes)": FunctionFragment;
-    "multicall(address[],bytes[])": FunctionFragment;
-    "owner()": FunctionFragment;
-    "reactorCallback(((address,address,uint256,uint256,address,bytes),(address,uint256,uint256),(address,uint256,address)[],bytes,bytes32)[],bytes)": FunctionFragment;
-    "transferOwnership(address)": FunctionFragment;
-    "unwrapWETH(address)": FunctionFragment;
-    "withdrawETH(address)": FunctionFragment;
-  };
-
+export interface SwapRouter02ExecutorInterface extends Interface {
   getFunction(
-    nameOrSignatureOrTopic:
+    nameOrSignature:
       | "execute"
       | "executeBatch"
       | "multicall"
@@ -132,34 +114,36 @@ export interface SwapRouter02ExecutorInterface extends utils.Interface {
       | "withdrawETH"
   ): FunctionFragment;
 
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+
   encodeFunctionData(
     functionFragment: "execute",
-    values: [SignedOrderStruct, PromiseOrValue<BytesLike>]
+    values: [SignedOrderStruct, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "executeBatch",
-    values: [SignedOrderStruct[], PromiseOrValue<BytesLike>]
+    values: [SignedOrderStruct[], BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "multicall",
-    values: [PromiseOrValue<string>[], PromiseOrValue<BytesLike>[]]
+    values: [AddressLike[], BytesLike[]]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "reactorCallback",
-    values: [ResolvedOrderStruct[], PromiseOrValue<BytesLike>]
+    values: [ResolvedOrderStruct[], BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "unwrapWETH",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "withdrawETH",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
 
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
@@ -182,273 +166,171 @@ export interface SwapRouter02ExecutorInterface extends utils.Interface {
     functionFragment: "withdrawETH",
     data: BytesLike
   ): Result;
-
-  events: {
-    "OwnershipTransferred(address,address)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
 
-export interface OwnershipTransferredEventObject {
-  user: string;
-  newOwner: string;
+export namespace OwnershipTransferredEvent {
+  export type InputTuple = [user: AddressLike, newOwner: AddressLike];
+  export type OutputTuple = [user: string, newOwner: string];
+  export interface OutputObject {
+    user: string;
+    newOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type OwnershipTransferredEvent = TypedEvent<
-  [string, string],
-  OwnershipTransferredEventObject
->;
-
-export type OwnershipTransferredEventFilter =
-  TypedEventFilter<OwnershipTransferredEvent>;
 
 export interface SwapRouter02Executor extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): SwapRouter02Executor;
+  waitForDeployment(): Promise<this>;
 
   interface: SwapRouter02ExecutorInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  functions: {
-    execute(
-      order: SignedOrderStruct,
-      callbackData: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-    executeBatch(
-      orders: SignedOrderStruct[],
-      callbackData: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
 
-    multicall(
-      tokensToApprove: PromiseOrValue<string>[],
-      multicallData: PromiseOrValue<BytesLike>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  execute: TypedContractMethod<
+    [order: SignedOrderStruct, callbackData: BytesLike],
+    [void],
+    "nonpayable"
+  >;
 
-    owner(overrides?: CallOverrides): Promise<[string]>;
+  executeBatch: TypedContractMethod<
+    [orders: SignedOrderStruct[], callbackData: BytesLike],
+    [void],
+    "nonpayable"
+  >;
 
-    reactorCallback(
-      arg0: ResolvedOrderStruct[],
-      callbackData: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  multicall: TypedContractMethod<
+    [tokensToApprove: AddressLike[], multicallData: BytesLike[]],
+    [void],
+    "nonpayable"
+  >;
 
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  owner: TypedContractMethod<[], [string], "view">;
 
-    unwrapWETH(
-      recipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  reactorCallback: TypedContractMethod<
+    [arg0: ResolvedOrderStruct[], callbackData: BytesLike],
+    [void],
+    "nonpayable"
+  >;
 
-    withdrawETH(
-      recipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-  };
+  transferOwnership: TypedContractMethod<
+    [newOwner: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-  execute(
-    order: SignedOrderStruct,
-    callbackData: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  unwrapWETH: TypedContractMethod<
+    [recipient: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-  executeBatch(
-    orders: SignedOrderStruct[],
-    callbackData: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  withdrawETH: TypedContractMethod<
+    [recipient: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-  multicall(
-    tokensToApprove: PromiseOrValue<string>[],
-    multicallData: PromiseOrValue<BytesLike>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
 
-  owner(overrides?: CallOverrides): Promise<string>;
+  getFunction(
+    nameOrSignature: "execute"
+  ): TypedContractMethod<
+    [order: SignedOrderStruct, callbackData: BytesLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "executeBatch"
+  ): TypedContractMethod<
+    [orders: SignedOrderStruct[], callbackData: BytesLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "multicall"
+  ): TypedContractMethod<
+    [tokensToApprove: AddressLike[], multicallData: BytesLike[]],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "owner"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "reactorCallback"
+  ): TypedContractMethod<
+    [arg0: ResolvedOrderStruct[], callbackData: BytesLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "transferOwnership"
+  ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "unwrapWETH"
+  ): TypedContractMethod<[recipient: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "withdrawETH"
+  ): TypedContractMethod<[recipient: AddressLike], [void], "nonpayable">;
 
-  reactorCallback(
-    arg0: ResolvedOrderStruct[],
-    callbackData: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  transferOwnership(
-    newOwner: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  unwrapWETH(
-    recipient: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  withdrawETH(
-    recipient: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  callStatic: {
-    execute(
-      order: SignedOrderStruct,
-      callbackData: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    executeBatch(
-      orders: SignedOrderStruct[],
-      callbackData: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    multicall(
-      tokensToApprove: PromiseOrValue<string>[],
-      multicallData: PromiseOrValue<BytesLike>[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    owner(overrides?: CallOverrides): Promise<string>;
-
-    reactorCallback(
-      arg0: ResolvedOrderStruct[],
-      callbackData: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    unwrapWETH(
-      recipient: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    withdrawETH(
-      recipient: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-  };
+  getEvent(
+    key: "OwnershipTransferred"
+  ): TypedContractEvent<
+    OwnershipTransferredEvent.InputTuple,
+    OwnershipTransferredEvent.OutputTuple,
+    OwnershipTransferredEvent.OutputObject
+  >;
 
   filters: {
-    "OwnershipTransferred(address,address)"(
-      user?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnershipTransferredEventFilter;
-    OwnershipTransferred(
-      user?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnershipTransferredEventFilter;
-  };
-
-  estimateGas: {
-    execute(
-      order: SignedOrderStruct,
-      callbackData: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    executeBatch(
-      orders: SignedOrderStruct[],
-      callbackData: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    multicall(
-      tokensToApprove: PromiseOrValue<string>[],
-      multicallData: PromiseOrValue<BytesLike>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    reactorCallback(
-      arg0: ResolvedOrderStruct[],
-      callbackData: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    unwrapWETH(
-      recipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    withdrawETH(
-      recipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    execute(
-      order: SignedOrderStruct,
-      callbackData: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    executeBatch(
-      orders: SignedOrderStruct[],
-      callbackData: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    multicall(
-      tokensToApprove: PromiseOrValue<string>[],
-      multicallData: PromiseOrValue<BytesLike>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    reactorCallback(
-      arg0: ResolvedOrderStruct[],
-      callbackData: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    unwrapWETH(
-      recipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    withdrawETH(
-      recipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+    "OwnershipTransferred(address,address)": TypedContractEvent<
+      OwnershipTransferredEvent.InputTuple,
+      OwnershipTransferredEvent.OutputTuple,
+      OwnershipTransferredEvent.OutputObject
+    >;
+    OwnershipTransferred: TypedContractEvent<
+      OwnershipTransferredEvent.InputTuple,
+      OwnershipTransferredEvent.OutputTuple,
+      OwnershipTransferredEvent.OutputObject
+    >;
   };
 }

@@ -2,15 +2,18 @@
 /* tslint:disable */
 /* eslint-disable */
 import {
-  Signer,
-  utils,
   Contract,
   ContractFactory,
-  BigNumberish,
-  Overrides,
+  ContractTransactionResponse,
+  Interface,
 } from "ethers";
-import type { Provider, TransactionRequest } from "@ethersproject/providers";
-import type { PromiseOrValue } from "../common";
+import type {
+  Signer,
+  BigNumberish,
+  ContractDeployTransaction,
+  ContractRunner,
+} from "ethers";
+import type { NonPayableOverrides } from "../common";
 import type { MockERC20, MockERC20Interface } from "../MockERC20";
 
 const _abi = [
@@ -401,43 +404,36 @@ export class MockERC20__factory extends ContractFactory {
     }
   }
 
-  override deploy(
-    name: PromiseOrValue<string>,
-    symbol: PromiseOrValue<string>,
-    decimals: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<MockERC20> {
-    return super.deploy(
-      name,
-      symbol,
-      decimals,
-      overrides || {}
-    ) as Promise<MockERC20>;
-  }
   override getDeployTransaction(
-    name: PromiseOrValue<string>,
-    symbol: PromiseOrValue<string>,
-    decimals: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): TransactionRequest {
+    name: string,
+    symbol: string,
+    decimals: BigNumberish,
+    overrides?: NonPayableOverrides & { from?: string }
+  ): Promise<ContractDeployTransaction> {
     return super.getDeployTransaction(name, symbol, decimals, overrides || {});
   }
-  override attach(address: string): MockERC20 {
-    return super.attach(address) as MockERC20;
+  override deploy(
+    name: string,
+    symbol: string,
+    decimals: BigNumberish,
+    overrides?: NonPayableOverrides & { from?: string }
+  ) {
+    return super.deploy(name, symbol, decimals, overrides || {}) as Promise<
+      MockERC20 & {
+        deploymentTransaction(): ContractTransactionResponse;
+      }
+    >;
   }
-  override connect(signer: Signer): MockERC20__factory {
-    return super.connect(signer) as MockERC20__factory;
+  override connect(runner: ContractRunner | null): MockERC20__factory {
+    return super.connect(runner) as MockERC20__factory;
   }
 
   static readonly bytecode = _bytecode;
   static readonly abi = _abi;
   static createInterface(): MockERC20Interface {
-    return new utils.Interface(_abi) as MockERC20Interface;
+    return new Interface(_abi) as MockERC20Interface;
   }
-  static connect(
-    address: string,
-    signerOrProvider: Signer | Provider
-  ): MockERC20 {
-    return new Contract(address, _abi, signerOrProvider) as MockERC20;
+  static connect(address: string, runner?: ContractRunner | null): MockERC20 {
+    return new Contract(address, _abi, runner) as unknown as MockERC20;
   }
 }
