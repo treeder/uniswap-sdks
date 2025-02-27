@@ -18,8 +18,9 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
           # Defaults to the user or organization that owns the workflow file
           # scope: '@octocat'
-      - working-directory: ./sdks/v4-sdk
-        run: npm ci
-      - run: npm publish
+      - run: |
+          npm ci
+          npm publish
+        working-directory: ./sdks/v4-sdk
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
