@@ -19,6 +19,7 @@ jobs:
           # Defaults to the user or organization that owns the workflow file
           # scope: '@octocat'
       - run: |
+          pwd
           npm ci
           npm publish
         working-directory: ./sdks/v4-sdk
