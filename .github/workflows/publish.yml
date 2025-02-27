@@ -24,17 +24,15 @@ jobs:
           # echo "//npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN" > ~/.npmrc
           yarn
           npx turbo run build
-      # - name: Bump version npm style
-      #   run: |
-      #     git config --global user.email "github+actions@gmail.com"
-      #     git config --global user.name "Actions"
-      #     npm version patch
-      #     git push --follow-tags
+          git config --global user.email "github+actions@gmail.com"
+          git config --global user.name "Actions"
       - name: Publish v3
         run: |
           pwd
           echo "//npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN" > ~/.npmrc
           cat ~/.npmrc
+          npm version patch
+          git push --follow-tags
           npm publish
         working-directory: ./sdks/v3-sdk
         env:
@@ -44,6 +42,8 @@ jobs:
           pwd
           echo "//npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN" > ~/.npmrc
           cat ~/.npmrc
+          npm version patch
+          git push --follow-tags
           npm publish
         working-directory: ./sdks/v4-sdk
         env:
