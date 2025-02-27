@@ -18,9 +18,11 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
           # Defaults to the user or organization that owns the workflow file
           # scope: '@octocat'
+      - name: Build
+        run: |
+          npx turbo run build
       - run: |
           pwd
-          npm ci
           npm publish
         working-directory: ./sdks/v4-sdk
         env:
