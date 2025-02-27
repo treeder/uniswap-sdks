@@ -62,7 +62,8 @@
   },
   "publishConfig": {
     "access": "public",
-    "provenance": true
+    "provenance": true,
+    "registry": "https://npm.pkg.github.com"
   },
   "release": {
     "extends": "semantic-release-monorepo",
