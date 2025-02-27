@@ -21,6 +21,7 @@ jobs:
       - name: Build
         run: |
           corepack enable
+          echo "//npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN" > ~/.npmrc
           yarn
           npx turbo run build
       - run: |
