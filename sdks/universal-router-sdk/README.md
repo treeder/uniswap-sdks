@@ -7,9 +7,9 @@ Install latest version of universal-router-sdk. Then import the corresponding Tr
 ### Trading on Uniswap
 warning: `swapERC20CallParameters()` to be deprecated in favor of `swapCallParameters()`
 ```typescript
-import { TradeType } from '@uniswap/sdk-core'
+import { TradeType } from '@treeder/uniswap-sdk-core'
 import { Trade as V2TradeSDK } from '@uniswap/v2-sdk'
-import { Trade as V3TradeSDK } from '@uniswap/v3-sdk'
+import { Trade as V3TradeSDK } from '@treeder/uniswap-v3-sdk'
 import { MixedRouteTrade, MixedRouteSDK, Trade as RouterTrade } from '@uniswap/router-sdk'
 
 const options = { slippageTolerance, recipient }

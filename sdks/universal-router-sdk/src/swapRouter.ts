@@ -1,5 +1,5 @@
 import invariant from 'tiny-invariant'
-import { abi } from '@uniswap/universal-router/artifacts/contracts/UniversalRouter.sol/UniversalRouter.json'
+import { abi } from '@uniswap/universal-router/artifacts/contracts/UniversalRouter.sol/UniversalRouter.json' with { type: 'json' }
 import { Interface } from '@ethersproject/abi'
 import { BigNumber, BigNumberish } from 'ethers'
 import {
@@ -8,7 +8,7 @@ import {
   Position as V3Position,
   NonfungiblePositionManager as V3PositionManager,
   RemoveLiquidityOptions as V3RemoveLiquidityOptions,
-} from '@uniswap/v3-sdk'
+} from '@treeder/uniswap-v3-sdk'
 import {
   Position as V4Position,
   V4PositionManager,
@@ -16,9 +16,9 @@ import {
   MintOptions,
   Pool as V4Pool,
   PoolKey,
-} from '@uniswap/v4-sdk'
+} from '@treeder/uniswap-v4-sdk'
 import { Trade as RouterTrade } from '@uniswap/router-sdk'
-import { Currency, TradeType, Percent, CHAIN_TO_ADDRESSES_MAP, SupportedChainsType } from '@uniswap/sdk-core'
+import { Currency, TradeType, Percent, CHAIN_TO_ADDRESSES_MAP, SupportedChainsType } from '@treeder/uniswap-sdk-core'
 import { UniswapTrade, SwapOptions } from './entities/actions/uniswap'
 import { RoutePlanner, CommandType } from './utils/routerCommands'
 import { encodePermit, encodeV3PositionPermit } from './utils/inputTokens'
@@ -93,7 +93,7 @@ export abstract class SwapRouter {
     if (v4Pool.currency0.isNative) {
       invariant(
         (v4Pool.currency0.wrapped.equals(v3Token0) && v4Pool.currency1.equals(v3Token1)) ||
-          (v4Pool.currency0.wrapped.equals(v3Token1) && v4Pool.currency1.equals(v3Token0)),
+        (v4Pool.currency0.wrapped.equals(v3Token1) && v4Pool.currency1.equals(v3Token0)),
         'TOKEN_MISMATCH'
       )
     } else {
@@ -155,8 +155,8 @@ export abstract class SwapRouter {
       const selector = v3Call.slice(0, 10)
       invariant(
         selector == V3PositionManager.INTERFACE.getSighash('collect') ||
-          selector == V3PositionManager.INTERFACE.getSighash('decreaseLiquidity') ||
-          selector == V3PositionManager.INTERFACE.getSighash('burn'),
+        selector == V3PositionManager.INTERFACE.getSighash('decreaseLiquidity') ||
+        selector == V3PositionManager.INTERFACE.getSighash('burn'),
         'INVALID_V3_CALL: ' + selector
       )
       planner.addCommand(CommandType.V3_POSITION_MANAGER_CALL, [v3Call])

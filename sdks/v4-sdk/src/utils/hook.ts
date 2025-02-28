@@ -1,5 +1,5 @@
 import invariant from 'tiny-invariant'
-import { isAddress } from 'ethers/lib/utils'
+import { isAddress } from 'ethers'
 
 export type HookPermissions = { [key in HookOptions]: boolean }
 

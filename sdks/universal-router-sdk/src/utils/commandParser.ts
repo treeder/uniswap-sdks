@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
-import { abi } from '@uniswap/universal-router/artifacts/contracts/UniversalRouter.sol/UniversalRouter.json'
+import { abi } from '@uniswap/universal-router/artifacts/contracts/UniversalRouter.sol/UniversalRouter.json' with { type: 'json' }
 import { Interface } from '@ethersproject/abi'
-import { V4BaseActionsParser, V4RouterAction } from '@uniswap/v4-sdk'
+import { V4BaseActionsParser, V4RouterAction } from '@treeder/uniswap-v4-sdk'
 import { CommandType, CommandDefinition, COMMAND_DEFINITION, Subparser, Parser } from '../utils/routerCommands'
 
 export type Param = {
@@ -43,7 +43,7 @@ export abstract class CommandParser {
 
 // Parses commands based on given command definition
 export class GenericCommandParser {
-  constructor(private readonly commandDefinition: CommandsDefinition) {}
+  constructor(private readonly commandDefinition: CommandsDefinition) { }
 
   public parse(commands: string, inputs: string[]): UniversalRouterCall {
     const commandTypes = GenericCommandParser.getCommands(commands)

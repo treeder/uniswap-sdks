@@ -1,4 +1,4 @@
-import { BigintIsh, CurrencyAmount, Ether, Percent, Token, TradeType, WETH9 } from '@uniswap/sdk-core'
+import { BigintIsh, CurrencyAmount, Ether, Percent, Token, TradeType, WETH9 } from '@treeder/uniswap-sdk-core'
 import { Pair, Route as V2Route, Trade as V2Trade } from '@uniswap/v2-sdk'
 import {
   encodeSqrtRatioX96,
@@ -10,8 +10,8 @@ import {
   TickMath,
   TICK_SPACINGS,
   Trade as V3Trade,
-} from '@uniswap/v3-sdk'
-import { Pool as V4Pool } from '@uniswap/v4-sdk'
+} from '@treeder/uniswap-v3-sdk'
+import { Pool as V4Pool } from '@treeder/uniswap-v4-sdk'
 import JSBI from 'jsbi'
 import { SwapRouter, Trade } from '.'
 import { ApprovalTypes } from './approveAndCall'

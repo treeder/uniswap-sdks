@@ -1,25 +1,25 @@
 {
   "name": "sdks",
-  "version": "0.0.0",
+  "version": "2.0.3",
   "dependencies": {
-    "@babel/runtime": "7.18.9",
+    "@babel/runtime": "^7.26.9",
     "@manypkg/cli": "^0.19.2",
     "@semantic-release/exec": "6.0.3",
-    "@typescript-eslint/eslint-plugin": "^5.62",
-    "danger": "11.2.6",
-    "eslint": "^7.8.0",
-    "eslint-plugin-prettier": "^3.4.1",
+    "@typescript-eslint/eslint-plugin": "^8.25.0",
+    "danger": "^11.2.6",
+    "eslint": "^9.21.0",
+    "eslint-plugin-prettier": "^5.2.3",
     "husky": "^8.0.3",
-    "semantic-release": "^20.1.0",
-    "semantic-release-monorepo": "7.0.5",
+    "semantic-release": "^24.2.3",
+    "semantic-release-monorepo": "^8.0.2",
     "syncpack": "^8.5.14",
-    "turbo": "1.10.16"
+    "turbo": "^2.4.4"
   },
   "engines": {
     "node": ">=10",
     "yarn": ">=3.2.3"
   },
-  "packageManager": "yarn@3.2.3",
+  "packageManager": "yarn@4.6.0",
   "private": true,
   "scripts": {
     "g:check:deps:mismatch": "manypkg check",
@@ -32,10 +32,9 @@
     "postinstall": "husky"
   },
   "workspaces": [
-    "sdks/*",
-    "sdks/uniswapx-sdk/integration"
+    "sdks/*"
   ],
-  "resolutions": {
-    "@manypkg/cli@^0.19.2": "patch:@manypkg/cli@npm%3A0.19.2#./.yarn/patches/@manypkg-cli-npm-0.19.2-ea52ff91d4.patch"
+  "devDependencies": {
+    "tsup": "^8.4.0"
   }
 }

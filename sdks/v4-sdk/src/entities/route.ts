@@ -1,6 +1,6 @@
 import invariant from 'tiny-invariant'
 
-import { Currency, Price } from '@uniswap/sdk-core'
+import { Currency, Price } from '@treeder/uniswap-sdk-core'
 import { Pool } from './pool'
 import { getPathCurrency } from '../utils/pathCurrency'
 
@@ -69,23 +69,23 @@ export class Route<TInput extends Currency, TOutput extends Currency> {
       ({ nextInput, price }, pool) => {
         return nextInput.equals(pool.currency0)
           ? {
-              nextInput: pool.currency1,
-              price: price.multiply(pool.currency0Price),
-            }
+            nextInput: pool.currency1,
+            price: price.multiply(pool.currency0Price),
+          }
           : {
-              nextInput: pool.currency0,
-              price: price.multiply(pool.currency1Price),
-            }
+            nextInput: pool.currency0,
+            price: price.multiply(pool.currency1Price),
+          }
       },
       this.pools[0].currency0.equals(this.input)
         ? {
-            nextInput: this.pools[0].currency1,
-            price: this.pools[0].currency0Price,
-          }
+          nextInput: this.pools[0].currency1,
+          price: this.pools[0].currency0Price,
+        }
         : {
-            nextInput: this.pools[0].currency0,
-            price: this.pools[0].currency1Price,
-          }
+          nextInput: this.pools[0].currency0,
+          price: this.pools[0].currency1Price,
+        }
     ).price
 
     return (this._midPrice = new Price(this.input, this.output, price.denominator, price.numerator))

@@ -17,7 +17,7 @@
     "node": ">=10"
   },
   "scripts": {
-    "build": "tsdx build",
+    "build": "tsup src/index.ts --format esm",
     "lint": "tsdx lint src",
     "release": "semantic-release",
     "start": "tsdx watch",
@@ -26,16 +26,15 @@
   "dependencies": {
     "@ethersproject/address": "^5.0.2",
     "@ethersproject/solidity": "^5.0.9",
-    "@uniswap/sdk-core": "^7.6.0",
+    "@treeder/uniswap-sdk-core": "https://gitpkg.vercel.app/treeder/uniswap-sdks/sdks/sdk-core?esm-build",
     "tiny-invariant": "^1.1.0",
     "tiny-warning": "^1.0.3"
   },
   "devDependencies": {
     "@types/big.js": "^4.0.5",
-    "@types/jest": "^24.0.25",
+    "@types/jest": "^29.5.14",
     "@uniswap/v2-core": "^1.0.1",
-    "eslint-config-react-app": "7.0.1",
-    "tsdx": "^0.14.1"
+    "eslint-config-react-app": "7.0.1"
   },
   "prettier": {
     "printWidth": 120,

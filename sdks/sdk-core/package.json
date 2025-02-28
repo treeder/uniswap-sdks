@@ -1,5 +1,5 @@
 {
-  "name": "@uniswap/sdk-core",
+  "name": "@treeder/uniswap-sdk-core",
   "description": "⚒️ An SDK for building applications on top of Uniswap V3",
   "repository": "https://github.com/Uniswap/sdks.git",
   "keywords": [
@@ -7,17 +7,18 @@
     "ethereum"
   ],
   "license": "MIT",
+  "type": "module",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
-  "module": "dist/sdk-core.esm.js",
+  "module": "dist/index.js",
   "files": [
     "dist"
   ],
   "engines": {
-    "node": ">=10"
+    "node": ">=14"
   },
   "scripts": {
-    "build": "tsdx build",
+    "build": "tsup src/index.ts --format esm",
     "lint": "tsdx lint src",
     "release": "semantic-release",
     "start": "tsdx watch",
@@ -26,18 +27,17 @@
   "dependencies": {
     "@ethersproject/address": "^5.0.2",
     "@ethersproject/bytes": "^5.7.0",
-    "@ethersproject/keccak256": "5.7.0",
-    "@ethersproject/strings": "5.7.0",
-    "big.js": "^5.2.2",
+    "@ethersproject/keccak256": "^5.7.0",
+    "@ethersproject/strings": "^5.7.0",
+    "big.js": "^6.2.2",
     "decimal.js-light": "^2.5.0",
-    "jsbi": "^3.1.4",
+    "jsbi": "^4.3.0",
     "tiny-invariant": "^1.1.0",
     "toformat": "^2.0.0"
   },
   "devDependencies": {
-    "@types/big.js": "^4.0.5",
-    "@types/jest": "^24.0.25",
-    "tsdx": "^0.14.1"
+    "@types/big.js": "^6.2.2",
+    "@types/jest": "^29.5.14"
   },
   "prettier": {
     "printWidth": 120,

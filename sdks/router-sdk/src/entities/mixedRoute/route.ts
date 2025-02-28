@@ -1,6 +1,6 @@
 import invariant from 'tiny-invariant'
-import { Currency, Price, Token } from '@uniswap/sdk-core'
-import { Pool as V4Pool } from '@uniswap/v4-sdk'
+import { Currency, Price, Token } from '@treeder/uniswap-sdk-core'
+import { Pool as V4Pool } from '@treeder/uniswap-v4-sdk'
 import { getPathCurrency } from '../../utils/pathCurrency'
 import { TPool } from '../../utils/TPool'
 
@@ -111,24 +111,24 @@ export class MixedRouteSDK<TInput extends Currency, TOutput extends Currency> {
       ({ nextInput, price }, pool) => {
         return nextInput.equals(pool.token0)
           ? {
-              nextInput: pool.token1,
-              price: price.multiply(pool.token0Price.asFraction),
-            }
+            nextInput: pool.token1,
+            price: price.multiply(pool.token0Price.asFraction),
+          }
           : {
-              nextInput: pool.token0,
-              price: price.multiply(pool.token1Price.asFraction),
-            }
+            nextInput: pool.token0,
+            price: price.multiply(pool.token1Price.asFraction),
+          }
       },
 
       this.pools[0].token0.equals(this.pathInput)
         ? {
-            nextInput: this.pools[0].token1,
-            price: this.pools[0].token0Price.asFraction,
-          }
+          nextInput: this.pools[0].token1,
+          price: this.pools[0].token0Price.asFraction,
+        }
         : {
-            nextInput: this.pools[0].token0,
-            price: this.pools[0].token1Price.asFraction,
-          }
+          nextInput: this.pools[0].token0,
+          price: this.pools[0].token1Price.asFraction,
+        }
     ).price
 
     return (this._midPrice = new Price(this.input, this.output, price.denominator, price.numerator))
