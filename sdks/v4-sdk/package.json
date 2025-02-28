@@ -31,7 +31,7 @@
   "dependencies": {
     "@ethersproject/solidity": "^5.0.9",
     "@treeder/uniswap-v3-sdk": "https://gitpkg.vercel.app/treeder/uniswap-sdks/sdks/v3-sdk?esm-build",
-    "@uniswap/sdk-core": "^7.6.0",
+    "@treeder/uniswap-sdk-core": "https://gitpkg.vercel.app/treeder/uniswap-sdks/sdks/sdk-core?esm-build",
     "tiny-invariant": "^1.1.0",
     "tiny-warning": "^1.0.3"
   },

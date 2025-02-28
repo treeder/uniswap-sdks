@@ -1,7 +1,7 @@
-import { ChainId } from "@uniswap/sdk-core";
-import { BigNumber } from "ethers";
+import { ChainId } from "@treeder/uniswap-sdk-core"
+import { BigNumber } from "ethers"
 
-type AddressMap = { readonly [key: number]: string };
+type AddressMap = { readonly [key: number]: string }
 
 const NETWORKS_WITH_SAME_ADDRESS: ChainId[] = [
   ChainId.MAINNET,
@@ -9,18 +9,18 @@ const NETWORKS_WITH_SAME_ADDRESS: ChainId[] = [
   ChainId.POLYGON,
   ChainId.BASE,
   ChainId.UNICHAIN,
-];
+]
 
 export function constructSameAddressMap<T>(
   address: T,
   additionalNetworks: ChainId[] = []
 ): { [chainId: number]: T } {
   return NETWORKS_WITH_SAME_ADDRESS.concat(additionalNetworks).reduce<{
-    [chainId: number]: T;
+    [chainId: number]: T
   }>((memo, chainId) => {
-    memo[chainId] = address;
-    return memo;
-  }, {});
+    memo[chainId] = address
+    return memo
+  }, {})
 }
 
 export const PERMIT2_MAPPING: AddressMap = {
@@ -29,7 +29,7 @@ export const PERMIT2_MAPPING: AddressMap = {
     [11155111, 42161]
   ),
   12341234: "0x000000000022d473030f116ddee9f6b43ac78ba3",
-};
+}
 
 export const UNISWAPX_ORDER_QUOTER_MAPPING: AddressMap = {
   ...constructSameAddressMap("0x54539967a06Fc0E3C3ED0ee320Eb67362D13C5fF"),
@@ -38,7 +38,7 @@ export const UNISWAPX_ORDER_QUOTER_MAPPING: AddressMap = {
   12341234: "0xbea0901A41177811b099F787D753436b2c47690E",
   8453: "0x88440407634f89873c5d9439987ac4be9725fea8",
   130: "0x88440407634F89873c5D9439987Ac4BE9725fea8",
-};
+}
 
 export const EXCLUSIVE_FILLER_VALIDATION_MAPPING: AddressMap = {
   ...constructSameAddressMap("0x8A66A74e15544db9688B68B06E116f5d19e5dF90"),
@@ -46,7 +46,7 @@ export const EXCLUSIVE_FILLER_VALIDATION_MAPPING: AddressMap = {
   11155111: "0x0000000000000000000000000000000000000000",
   42161: "0x0000000000000000000000000000000000000000",
   12341234: "0x8A66A74e15544db9688B68B06E116f5d19e5dF90",
-};
+}
 
 export enum KNOWN_EVENT_SIGNATURES {
   ERC20_TRANSFER = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
@@ -62,13 +62,13 @@ export enum OrderType {
 }
 
 type Reactors = Partial<{
-  [key in OrderType]: string;
-}>;
+  [key in OrderType]: string
+}>
 
-type ReactorMapping = { readonly [key: number]: Reactors };
+type ReactorMapping = { readonly [key: number]: Reactors }
 type ReverseReactorMapping = {
-  [key: string]: { orderType: OrderType };
-};
+  [key: string]: { orderType: OrderType }
+}
 
 export const REACTOR_ADDRESS_MAPPING: ReactorMapping = {
   ...constructSameAddressMap({
@@ -111,10 +111,10 @@ export const REACTOR_ADDRESS_MAPPING: ReactorMapping = {
     [OrderType.Relay]: "0x0000000000000000000000000000000000000000",
     [OrderType.Priority]: "0x00000006021a6Bce796be7ba509BBBA71e956e37",
   },
-};
+}
 
 // aliasing for backwards compatibility
-export const REACTOR_CONTRACT_MAPPING: ReactorMapping = REACTOR_ADDRESS_MAPPING;
+export const REACTOR_CONTRACT_MAPPING: ReactorMapping = REACTOR_ADDRESS_MAPPING
 
 // https://github.com/mds1/multicall
 export const multicallAddressOn = (chainId = 1) => {
@@ -123,14 +123,14 @@ export const multicallAddressOn = (chainId = 1) => {
     // due to differences in create2 address derivation
     // deployment address from: https://github.com/mds1/multicall/blob/d7b62458c99c650ce1efa7464ffad69d2059ad56/deployments.json#L927
     case 324:
-      return "0xF9cda624FBC7e059355ce98a31693d299FACd963";
+      return "0xF9cda624FBC7e059355ce98a31693d299FACd963"
     default:
-      return "0xcA11bde05977b3631167028862bE2a173976CA11";
+      return "0xcA11bde05977b3631167028862bE2a173976CA11"
   }
-};
+}
 
 export const RELAY_SENTINEL_RECIPIENT =
-  "0x0000000000000000000000000000000000000000";
+  "0x0000000000000000000000000000000000000000"
 
 export const REVERSE_REACTOR_MAPPING: ReverseReactorMapping = Object.entries(
   REACTOR_ADDRESS_MAPPING
@@ -140,12 +140,12 @@ export const REVERSE_REACTOR_MAPPING: ReverseReactorMapping = Object.entries(
     // lowercase for consistency when parsing orders
     acc[reactorAddress.toLowerCase()] = {
       orderType: OrderType[orderType as keyof typeof OrderType],
-    };
+    }
   }
 
-  return acc;
-}, {});
+  return acc
+}, {})
 
-export const BPS = 10000;
+export const BPS = 10000
 
-export const MPS = BigNumber.from(10).pow(7);
+export const MPS = BigNumber.from(10).pow(7)

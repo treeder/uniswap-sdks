@@ -1,4 +1,4 @@
-import { BigintIsh, Percent, Price, CurrencyAmount, Currency, MaxUint256 } from '@uniswap/sdk-core'
+import { BigintIsh, Percent, Price, CurrencyAmount, Currency, MaxUint256 } from '@treeder/uniswap-sdk-core'
 import JSBI from 'jsbi'
 import invariant from 'tiny-invariant'
 import { Pool } from './pool'

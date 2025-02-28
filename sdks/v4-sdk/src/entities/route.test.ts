@@ -1,4 +1,4 @@
-import { Ether, Token, WETH9 } from '@uniswap/sdk-core'
+import { Ether, Token, WETH9 } from '@treeder/uniswap-sdk-core'
 import { encodeSqrtRatioX96, TickMath } from '@treeder/uniswap-v3-sdk'
 import { Pool } from './pool'
 import { Route } from './route'

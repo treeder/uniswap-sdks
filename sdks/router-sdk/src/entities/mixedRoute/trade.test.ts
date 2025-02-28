@@ -1,4 +1,4 @@
-import { Percent, Price, sqrt, Token, CurrencyAmount, TradeType, WETH9, Ether, Currency } from '@uniswap/sdk-core'
+import { Percent, Price, sqrt, Token, CurrencyAmount, TradeType, WETH9, Ether, Currency } from '@treeder/uniswap-sdk-core'
 import { Pair } from '@uniswap/v2-sdk'
 import {
   encodeSqrtRatioX96,
@@ -8,7 +8,7 @@ import {
   TickMath,
   TICK_SPACINGS,
 } from '@uniswap/v3-sdk'
-import { Pool as V4Pool } from '@uniswap/v4-sdk'
+import { Pool as V4Pool } from '@treeder/uniswap-v4-sdk'
 import JSBI from 'jsbi'
 import { MixedRouteSDK } from './route'
 import { MixedRouteTrade } from './trade'
@@ -663,11 +663,11 @@ describe('MixedRouteTrade', () => {
         let exactIn: MixedRouteTrade<Token, Token, TradeType.EXACT_INPUT>
         beforeEach(
           async () =>
-            (exactIn = await MixedRouteTrade.fromRoute(
-              new MixedRouteSDK([pool_v3_0_1, pool_v3_1_2], token0, token2),
-              CurrencyAmount.fromRawAmount(token0, 10000),
-              TradeType.EXACT_INPUT
-            ))
+          (exactIn = await MixedRouteTrade.fromRoute(
+            new MixedRouteSDK([pool_v3_0_1, pool_v3_1_2], token0, token2),
+            CurrencyAmount.fromRawAmount(token0, 10000),
+            TradeType.EXACT_INPUT
+          ))
         )
 
         it('throws if less than 0', () => {
@@ -1355,11 +1355,11 @@ describe('MixedRouteTrade', () => {
         )
         beforeEach(
           async () =>
-            (exactIn = await MixedRouteTrade.fromRoute(
-              new MixedRouteSDK([large_pair_0_1, pool_v3_1_2], token0, token2),
-              CurrencyAmount.fromRawAmount(token0, 10000),
-              TradeType.EXACT_INPUT
-            ))
+          (exactIn = await MixedRouteTrade.fromRoute(
+            new MixedRouteSDK([large_pair_0_1, pool_v3_1_2], token0, token2),
+            CurrencyAmount.fromRawAmount(token0, 10000),
+            TradeType.EXACT_INPUT
+          ))
         )
 
         it('throws if less than 0', () => {

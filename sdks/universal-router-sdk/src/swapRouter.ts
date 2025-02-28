@@ -16,9 +16,9 @@ import {
   MintOptions,
   Pool as V4Pool,
   PoolKey,
-} from '@uniswap/v4-sdk'
+} from '@treeder/uniswap-v4-sdk'
 import { Trade as RouterTrade } from '@uniswap/router-sdk'
-import { Currency, TradeType, Percent, CHAIN_TO_ADDRESSES_MAP, SupportedChainsType } from '@uniswap/sdk-core'
+import { Currency, TradeType, Percent, CHAIN_TO_ADDRESSES_MAP, SupportedChainsType } from '@treeder/uniswap-sdk-core'
 import { UniswapTrade, SwapOptions } from './entities/actions/uniswap'
 import { RoutePlanner, CommandType } from './utils/routerCommands'
 import { encodePermit, encodeV3PositionPermit } from './utils/inputTokens'

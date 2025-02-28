@@ -1,4 +1,4 @@
-import { Token, CurrencyAmount, WETH9, Ether, ChainId } from '@uniswap/sdk-core'
+import { Token, CurrencyAmount, WETH9, Ether, ChainId } from '@treeder/uniswap-sdk-core'
 import { Pool, DYNAMIC_FEE_FLAG } from './pool'
 import JSBI from 'jsbi'
 import { nearestUsableTick, encodeSqrtRatioX96, TickMath } from '@treeder/uniswap-v3-sdk'

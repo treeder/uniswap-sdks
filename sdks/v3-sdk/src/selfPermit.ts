@@ -1,4 +1,4 @@
-import { BigintIsh, Token } from '@uniswap/sdk-core'
+import { BigintIsh, Token } from '@treeder/uniswap-sdk-core'
 import { Interface } from '@ethersproject/abi'
 import ISelfPermit from '@uniswap/v3-periphery/artifacts/contracts/interfaces/ISelfPermit.sol/ISelfPermit.json' with { type: 'json' }
 import { toHex } from './utils'

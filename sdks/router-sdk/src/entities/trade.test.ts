@@ -1,4 +1,4 @@
-import { sqrt, Token, CurrencyAmount, TradeType, WETH9, Ether, Percent, Price } from '@uniswap/sdk-core'
+import { sqrt, Token, CurrencyAmount, TradeType, WETH9, Ether, Percent, Price } from '@treeder/uniswap-sdk-core'
 import { BigNumber } from '@ethersproject/bignumber'
 import JSBI from 'jsbi'
 import { MixedRoute, RouteV2, RouteV3, RouteV4 } from './route'
@@ -14,7 +14,7 @@ import {
 } from '@uniswap/v3-sdk'
 import { Pair, Route as V2RouteSDK } from '@uniswap/v2-sdk'
 import { MixedRouteSDK } from './mixedRoute/route'
-import { Route as V4RouteSDK, Pool as V4Pool } from '@uniswap/v4-sdk'
+import { Route as V4RouteSDK, Pool as V4Pool } from '@treeder/uniswap-v4-sdk'
 import { ADDRESS_ZERO } from '../constants'
 
 describe('Trade', () => {

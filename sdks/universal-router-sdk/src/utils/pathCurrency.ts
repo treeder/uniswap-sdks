@@ -1,5 +1,5 @@
-import { Currency, Token } from '@uniswap/sdk-core'
-import { Pool as V4Pool } from '@uniswap/v4-sdk'
+import { Currency, Token } from '@treeder/uniswap-sdk-core'
+import { Pool as V4Pool } from '@treeder/uniswap-v4-sdk'
 import { TPool } from '@uniswap/router-sdk/dist/utils/TPool'
 
 export function getPathCurrency(currency: Currency, pool: TPool): Currency {

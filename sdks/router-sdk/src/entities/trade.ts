@@ -1,7 +1,7 @@
-import { Currency, CurrencyAmount, Fraction, Percent, Price, TradeType, Ether } from '@uniswap/sdk-core'
+import { Currency, CurrencyAmount, Fraction, Percent, Price, TradeType, Ether } from '@treeder/uniswap-sdk-core'
 import { Pair, Route as V2RouteSDK, Trade as V2TradeSDK } from '@uniswap/v2-sdk'
 import { Pool as V3Pool, Route as V3RouteSDK, Trade as V3TradeSDK } from '@uniswap/v3-sdk'
-import { Pool as V4Pool, Route as V4RouteSDK, Trade as V4TradeSDK } from '@uniswap/v4-sdk'
+import { Pool as V4Pool, Route as V4RouteSDK, Trade as V4TradeSDK } from '@treeder/uniswap-v4-sdk'
 import invariant from 'tiny-invariant'
 import { ONE, ONE_HUNDRED_PERCENT, ZERO, ZERO_PERCENT } from '../constants'
 import { MixedRouteSDK } from './mixedRoute/route'
@@ -192,14 +192,14 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
       inputAmount: this.inputAmount,
       inputAmountNative: inputNativeCurrency
         ? this.swaps.reduce((total, swap) => {
-            return swap.route.pathInput.isNative ? total.add(swap.inputAmount) : total
-          }, CurrencyAmount.fromRawAmount(inputNativeCurrency, 0))
+          return swap.route.pathInput.isNative ? total.add(swap.inputAmount) : total
+        }, CurrencyAmount.fromRawAmount(inputNativeCurrency, 0))
         : undefined,
       outputAmount: this.outputAmount,
       outputAmountNative: outputNativeCurrency
         ? this.swaps.reduce((total, swap) => {
-            return swap.route.pathOutput.isNative ? total.add(swap.outputAmount) : total
-          }, CurrencyAmount.fromRawAmount(outputNativeCurrency, 0))
+          return swap.route.pathOutput.isNative ? total.add(swap.outputAmount) : total
+        }, CurrencyAmount.fromRawAmount(outputNativeCurrency, 0))
         : undefined,
     }
   }

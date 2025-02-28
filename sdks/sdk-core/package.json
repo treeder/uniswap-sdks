@@ -1,5 +1,5 @@
 {
-  "name": "@uniswap/sdk-core",
+  "name": "@treeder/uniswap-sdk-core",
   "description": "⚒️ An SDK for building applications on top of Uniswap V3",
   "repository": "https://github.com/Uniswap/sdks.git",
   "keywords": [
@@ -10,7 +10,7 @@
   "type": "module",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
-  "module": "dist/sdk-core.esm.js",
+  "module": "dist/index.js",
   "files": [
     "dist"
   ],

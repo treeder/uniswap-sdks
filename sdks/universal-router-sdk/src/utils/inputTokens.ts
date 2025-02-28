@@ -1,6 +1,6 @@
 import invariant from 'tiny-invariant'
 import { ethers } from 'ethers'
-import { validateAndParseAddress, BigintIsh } from '@uniswap/sdk-core'
+import { validateAndParseAddress, BigintIsh } from '@treeder/uniswap-sdk-core'
 import { NFTPermitOptions, NonfungiblePositionManager } from '@uniswap/v3-sdk'
 import { PermitSingle } from '@uniswap/permit2-sdk'
 import { CommandType, RoutePlanner } from './routerCommands'

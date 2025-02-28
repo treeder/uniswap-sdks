@@ -1,4 +1,4 @@
-import { Percent } from '@uniswap/sdk-core'
+import { Percent } from '@treeder/uniswap-sdk-core'
 import JSBI from 'jsbi'
 
 export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'

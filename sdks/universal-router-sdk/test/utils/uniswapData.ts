@@ -12,9 +12,9 @@ import {
   FeeAmount,
   Position,
 } from '@uniswap/v3-sdk'
-import { Pool as V4Pool, Route as RouteV4, Trade as V4Trade, Position as V4Position } from '@uniswap/v4-sdk'
+import { Pool as V4Pool, Route as RouteV4, Trade as V4Trade, Position as V4Position } from '@treeder/uniswap-v4-sdk'
 import { SwapOptions } from '../../src'
-import { CurrencyAmount, TradeType, Ether, Token, Percent, Currency } from '@uniswap/sdk-core'
+import { CurrencyAmount, TradeType, Ether, Token, Percent, Currency } from '@treeder/uniswap-sdk-core'
 import IUniswapV3Pool from '@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.sol/UniswapV3Pool.json' with { type: 'json' }
 import { TEST_RECIPIENT_ADDRESS, ROUTER_ADDRESS } from './addresses'
 import { MigrateV3ToV4Options } from '../../src/swapRouter'

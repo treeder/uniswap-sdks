@@ -1,6 +1,6 @@
 import invariant from 'tiny-invariant'
 import { AbiCoder } from 'ethers'
-import { Currency, Percent, TradeType } from '@uniswap/sdk-core'
+import { Currency, Percent, TradeType } from '@treeder/uniswap-sdk-core'
 import { Trade } from '../entities/trade'
 import { ADDRESS_ZERO, EMPTY_BYTES } from '../internalConstants'
 import { encodeRouteToPath } from './encodeRouteToPath'

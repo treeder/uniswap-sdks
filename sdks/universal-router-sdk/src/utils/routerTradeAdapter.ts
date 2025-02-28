@@ -1,9 +1,8 @@
 import { MixedRouteSDK, Trade as RouterTrade } from '@uniswap/router-sdk'
-import { Currency, CurrencyAmount, Ether, Token, TradeType } from '@uniswap/sdk-core'
+import { Currency, CurrencyAmount, Ether, Token, TradeType } from '@treeder/uniswap-sdk-core'
 import { Pair, Route as V2Route } from '@uniswap/v2-sdk'
 import { Pool as V3Pool, Route as V3Route, FeeAmount } from '@uniswap/v3-sdk'
-import { Pool as V4Pool, Route as V4Route } from '@uniswap/v4-sdk'
-import { BigNumber } from 'ethers'
+import { Pool as V4Pool, Route as V4Route } from '@treeder/uniswap-v4-sdk'
 import { ETH_ADDRESS, E_ETH_ADDRESS } from './constants'
 
 export type TokenInRoute = {
@@ -125,24 +124,24 @@ export class RouterTradeAdapter {
       return {
         routev4: isOnlyV4
           ? new V4Route(
-              (subRoute as V4PoolInRoute[]).map(RouterTradeAdapter.toV4Pool),
-              parsedCurrencyIn,
-              parsedCurrencyOut
-            )
+            (subRoute as V4PoolInRoute[]).map(RouterTradeAdapter.toV4Pool),
+            parsedCurrencyIn,
+            parsedCurrencyOut
+          )
           : null,
         routev3: isOnlyV3
           ? new V3Route(
-              (subRoute as V3PoolInRoute[]).map(RouterTradeAdapter.toV3Pool),
-              parsedCurrencyIn,
-              parsedCurrencyOut
-            )
+            (subRoute as V3PoolInRoute[]).map(RouterTradeAdapter.toV3Pool),
+            parsedCurrencyIn,
+            parsedCurrencyOut
+          )
           : null,
         routev2: isOnlyV2
           ? new V2Route(
-              (subRoute as V2PoolInRoute[]).map(RouterTradeAdapter.toPair),
-              parsedCurrencyIn,
-              parsedCurrencyOut
-            )
+            (subRoute as V2PoolInRoute[]).map(RouterTradeAdapter.toPair),
+            parsedCurrencyIn,
+            parsedCurrencyOut
+          )
           : null,
         mixedRoute:
           !isOnlyV4 && !isOnlyV3 && !isOnlyV2
@@ -215,8 +214,8 @@ export class RouterTradeAdapter {
       symbol,
       /* name */ undefined,
       false,
-      buyFeeBps ? BigNumber.from(buyFeeBps) : undefined,
-      sellFeeBps ? BigNumber.from(sellFeeBps) : undefined
+      buyFeeBps ? BigInt(buyFeeBps) : undefined,
+      sellFeeBps ? BigInt(sellFeeBps) : undefined
     )
   }
 

@@ -1,6 +1,6 @@
 import invariant from 'tiny-invariant'
 import { keccak256 } from '@ethersproject/solidity'
-import { BigintIsh, Currency, CurrencyAmount, Price } from '@uniswap/sdk-core'
+import { BigintIsh, Currency, CurrencyAmount, Price } from '@treeder/uniswap-sdk-core'
 import {
   v3Swap,
   NoTickDataProvider,

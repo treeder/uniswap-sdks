@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers'
 import JSBI from 'jsbi'
-import { CurrencyAmount, Ether, Percent, TradeType, Token, WETH9 } from '@uniswap/sdk-core'
+import { CurrencyAmount, Ether, Percent, TradeType, Token, WETH9 } from '@treeder/uniswap-sdk-core'
 import { encodeSqrtRatioX96, nearestUsableTick, TickMath } from '@treeder/uniswap-v3-sdk'
 import { Pool } from '../entities/pool'
 import { Trade } from '../entities/trade'

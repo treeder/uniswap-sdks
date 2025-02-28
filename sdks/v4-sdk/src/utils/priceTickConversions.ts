@@ -1,4 +1,4 @@
-import { Price, Currency } from '@uniswap/sdk-core'
+import { Price, Currency } from '@treeder/uniswap-sdk-core'
 import JSBI from 'jsbi'
 import { Q192 } from '../internalConstants'
 import { TickMath, encodeSqrtRatioX96 } from '@treeder/uniswap-v3-sdk'

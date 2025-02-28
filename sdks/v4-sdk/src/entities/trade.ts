@@ -1,4 +1,4 @@
-import { Currency, Fraction, Percent, Price, sortedInsert, CurrencyAmount, TradeType, Token } from '@uniswap/sdk-core'
+import { Currency, Fraction, Percent, Price, sortedInsert, CurrencyAmount, TradeType, Token } from '@treeder/uniswap-sdk-core'
 import invariant from 'tiny-invariant'
 import { ONE, ZERO } from '../internalConstants'
 import { Pool } from './pool'
@@ -237,7 +237,7 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
       let tokenAmount: CurrencyAmount<Currency> = amountWithPathCurrency(amount, route.pools[0])
       for (let i = 0; i < route.pools.length; i++) {
         const pool = route.pools[i]
-        ;[tokenAmount] = await pool.getOutputAmount(tokenAmount)
+          ;[tokenAmount] = await pool.getOutputAmount(tokenAmount)
       }
       inputAmount = CurrencyAmount.fromFractionalAmount(route.input, amount.numerator, amount.denominator)
       outputAmount = CurrencyAmount.fromFractionalAmount(route.output, tokenAmount.numerator, tokenAmount.denominator)
@@ -247,7 +247,7 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
       let tokenAmount: CurrencyAmount<Currency> = amountWithPathCurrency(amount, route.pools[route.pools.length - 1])
       for (let i = route.pools.length - 1; i >= 0; i--) {
         const pool = route.pools[i]
-        ;[tokenAmount] = await pool.getInputAmount(tokenAmount)
+          ;[tokenAmount] = await pool.getInputAmount(tokenAmount)
       }
       inputAmount = CurrencyAmount.fromFractionalAmount(route.input, tokenAmount.numerator, tokenAmount.denominator)
       outputAmount = CurrencyAmount.fromFractionalAmount(route.output, amount.numerator, amount.denominator)

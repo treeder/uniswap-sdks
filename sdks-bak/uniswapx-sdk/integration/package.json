@@ -29,7 +29,7 @@
     "@ethersproject/bytes": "^5.7.0",
     "@typechain/ethers-v6": "^0.5.1",
     "@typechain/hardhat": "^9.1.0",
-    "@uniswap/sdk-core": "^7.5.0",
+    "@treeder/uniswap-sdk-core": "https://gitpkg.vercel.app/treeder/uniswap-sdks/sdks/sdk-core?esm-build",
     "dotenv": "^16.0.3",
     "ethers": "^6.13.5",
     "typechain": "^8.1.0"

@@ -1,27 +1,27 @@
-import { Currency, Ether, Token, TradeType } from "@uniswap/sdk-core";
-import { BigNumber, constants, ethers } from "ethers";
+import { Currency, Ether, Token, TradeType } from "@treeder/uniswap-sdk-core"
+import { BigNumber, constants, ethers } from "ethers"
 
-import { DutchOrderInfo } from "../order";
+import { DutchOrderInfo } from "../order"
 
-import { DutchOrderTrade } from "./DutchOrderTrade";
-import { NativeAssets } from "./utils";
+import { DutchOrderTrade } from "./DutchOrderTrade"
+import { NativeAssets } from "./utils"
 
 const USDC = new Token(
   1,
   "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
   6,
   "USDC"
-);
+)
 const DAI = new Token(
   1,
   "0x6B175474E89094C44Da98b954EedeAC495271d0F",
   18,
   "DAI"
-);
+)
 
 describe("DutchOrderTrade", () => {
-  const NON_FEE_OUTPUT_AMOUNT = BigNumber.from("1000000000000000000");
-  const NON_FEE_MINIMUM_AMOUNT_OUT = BigNumber.from("900000000000000000");
+  const NON_FEE_OUTPUT_AMOUNT = BigNumber.from("1000000000000000000")
+  const NON_FEE_MINIMUM_AMOUNT_OUT = BigNumber.from("900000000000000000")
 
   const orderInfo: DutchOrderInfo = {
     deadline: Math.floor(new Date().getTime() / 1000) + 1000,
@@ -53,32 +53,32 @@ describe("DutchOrderTrade", () => {
         recipient: "0x0000000000000000000000000000000000000000",
       },
     ],
-  };
+  }
 
   const trade = new DutchOrderTrade<Currency, Currency, TradeType>({
     currencyIn: USDC,
     currenciesOut: [DAI],
     orderInfo,
     tradeType: TradeType.EXACT_INPUT,
-  });
+  })
 
   it("returns the right input amount for an exact-in trade", () => {
     expect(trade.inputAmount.quotient.toString()).toEqual(
       orderInfo.input.startAmount.toString()
-    );
-  });
+    )
+  })
 
   it("returns the correct non-fee output amount", () => {
     expect(trade.outputAmount.quotient.toString()).toEqual(
       NON_FEE_OUTPUT_AMOUNT.toString()
-    );
-  });
+    )
+  })
 
   it("returns the correct minimum amount out", () => {
     expect(trade.minimumAmountOut().quotient.toString()).toEqual(
       NON_FEE_MINIMUM_AMOUNT_OUT.toString()
-    );
-  });
+    )
+  })
 
   it("works for native output trades", () => {
     const ethOutputOrderInfo = {
@@ -91,15 +91,15 @@ describe("DutchOrderTrade", () => {
           recipient: "0x0000000000000000000000000000000000000000",
         },
       ],
-    };
+    }
     const ethOutputTrade = new DutchOrderTrade<Currency, Currency, TradeType>({
       currencyIn: USDC,
       currenciesOut: [Ether.onChain(1)],
       orderInfo: ethOutputOrderInfo,
       tradeType: TradeType.EXACT_INPUT,
-    });
-    expect(ethOutputTrade.outputAmount.currency).toEqual(Ether.onChain(1));
-  });
+    })
+    expect(ethOutputTrade.outputAmount.currency).toEqual(Ether.onChain(1))
+  })
 
   it("works for native output trades where order info has 0 address", () => {
     const ethOutputOrderInfo = {
@@ -112,13 +112,13 @@ describe("DutchOrderTrade", () => {
           recipient: "0x0000000000000000000000000000000000000000",
         },
       ],
-    };
+    }
     const ethOutputTrade = new DutchOrderTrade<Currency, Currency, TradeType>({
       currencyIn: USDC,
       currenciesOut: [Ether.onChain(1)],
       orderInfo: ethOutputOrderInfo,
       tradeType: TradeType.EXACT_INPUT,
-    });
-    expect(ethOutputTrade.outputAmount.currency).toEqual(Ether.onChain(1));
-  });
-});
+    })
+    expect(ethOutputTrade.outputAmount.currency).toEqual(Ether.onChain(1))
+  })
+})

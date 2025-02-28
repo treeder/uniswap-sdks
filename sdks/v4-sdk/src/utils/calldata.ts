@@ -1,4 +1,4 @@
-import { BigintIsh } from '@uniswap/sdk-core'
+import { BigintIsh } from '@treeder/uniswap-sdk-core'
 import JSBI from 'jsbi'
 
 /**

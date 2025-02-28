@@ -2,9 +2,9 @@
 
 import { Route as V2RouteSDK, Pair } from '@uniswap/v2-sdk'
 import { Route as V3RouteSDK, Pool as V3Pool } from '@uniswap/v3-sdk'
-import { Route as V4RouteSDK, Pool as V4Pool } from '@uniswap/v4-sdk'
+import { Route as V4RouteSDK, Pool as V4Pool } from '@treeder/uniswap-v4-sdk'
 import { Protocol } from './protocol'
-import { Currency, Price, Token } from '@uniswap/sdk-core'
+import { Currency, Price, Token } from '@treeder/uniswap-sdk-core'
 import { MixedRouteSDK } from './mixedRoute/route'
 
 // Helper function to get the pathInput and pathOutput for a V2 / V3 route
@@ -34,8 +34,7 @@ export interface IRoute<TInput extends Currency, TOutput extends Currency, TPool
 // V2 route wrapper
 export class RouteV2<TInput extends Currency, TOutput extends Currency>
   extends V2RouteSDK<TInput, TOutput>
-  implements IRoute<TInput, TOutput, Pair>
-{
+  implements IRoute<TInput, TOutput, Pair> {
   public readonly protocol: Protocol = Protocol.V2
   public readonly pools: Pair[]
   public pathInput: Currency
@@ -52,8 +51,7 @@ export class RouteV2<TInput extends Currency, TOutput extends Currency>
 // V3 route wrapper
 export class RouteV3<TInput extends Currency, TOutput extends Currency>
   extends V3RouteSDK<TInput, TOutput>
-  implements IRoute<TInput, TOutput, V3Pool>
-{
+  implements IRoute<TInput, TOutput, V3Pool> {
   public readonly protocol: Protocol = Protocol.V3
   public readonly path: Token[]
   public pathInput: Currency
@@ -70,8 +68,7 @@ export class RouteV3<TInput extends Currency, TOutput extends Currency>
 // V4 route wrapper
 export class RouteV4<TInput extends Currency, TOutput extends Currency>
   extends V4RouteSDK<TInput, TOutput>
-  implements IRoute<TInput, TOutput, V4Pool>
-{
+  implements IRoute<TInput, TOutput, V4Pool> {
   public readonly protocol: Protocol = Protocol.V4
   public readonly path: Currency[]
 
@@ -84,8 +81,7 @@ export class RouteV4<TInput extends Currency, TOutput extends Currency>
 // Mixed route wrapper
 export class MixedRoute<TInput extends Currency, TOutput extends Currency>
   extends MixedRouteSDK<TInput, TOutput>
-  implements IRoute<TInput, TOutput, Pair | V3Pool | V4Pool>
-{
+  implements IRoute<TInput, TOutput, Pair | V3Pool | V4Pool> {
   public readonly protocol: Protocol = Protocol.MIXED
 
   constructor(mixedRoute: MixedRouteSDK<TInput, TOutput>) {

@@ -8,7 +8,7 @@ import {
   V4Planner,
   encodeRouteToPath as encodeV4RouteToPath,
   Actions,
-} from '@uniswap/v4-sdk'
+} from '@treeder/uniswap-v4-sdk'
 import {
   Trade as RouterTrade,
   MixedRouteTrade,
@@ -25,7 +25,7 @@ import {
 } from '@uniswap/router-sdk'
 import { Permit2Permit } from '../../utils/inputTokens'
 import { getPathCurrency } from '../../utils/pathCurrency'
-import { Currency, TradeType, Token, CurrencyAmount, Percent } from '@uniswap/sdk-core'
+import { Currency, TradeType, Token, CurrencyAmount, Percent } from '@treeder/uniswap-sdk-core'
 import { Command, RouterActionType, TradeConfig } from '../Command'
 import { SENDER_AS_RECIPIENT, ROUTER_AS_RECIPIENT, CONTRACT_BALANCE, ETH_ADDRESS } from '../../utils/constants'
 import { getCurrencyAddress } from '../../utils/getCurrencyAddress'
