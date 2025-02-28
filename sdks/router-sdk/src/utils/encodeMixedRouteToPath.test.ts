@@ -1,6 +1,6 @@
 import { CurrencyAmount, Ether, Token, WETH9 } from '@treeder/uniswap-sdk-core'
 import { Pair } from '@uniswap/v2-sdk'
-import { encodeSqrtRatioX96, FeeAmount, Pool as V3Pool } from '@uniswap/v3-sdk'
+import { encodeSqrtRatioX96, FeeAmount, Pool as V3Pool } from '@treeder/uniswap-v3-sdk'
 import { Pool as V4Pool } from '@treeder/uniswap-v4-sdk'
 import { MixedRouteSDK } from '../entities/mixedRoute/route'
 import { encodeMixedRouteToPath } from './encodeMixedRouteToPath'

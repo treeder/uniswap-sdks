@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { Token, WETH9 } from '@treeder/uniswap-sdk-core'
-import { encodeSqrtRatioX96, nearestUsableTick, TickMath } from '@uniswap/v3-sdk'
+import { encodeSqrtRatioX96, nearestUsableTick, TickMath } from '@treeder/uniswap-v3-sdk'
 import { ethers, BigNumber } from 'ethers'
 import { CommandParser, UniversalRouterCall } from '../../src/utils/commandParser'
 import { RoutePlanner, CommandType } from '../../src/utils/routerCommands'

@@ -16,7 +16,7 @@ import {
   TickMath,
   FeeAmount,
   NonfungiblePositionManager,
-} from '@uniswap/v3-sdk'
+} from '@treeder/uniswap-v3-sdk'
 import { Pool as V4Pool, Route as V4Route, Trade as V4Trade, Position as V4Position } from '@treeder/uniswap-v4-sdk'
 import { generatePermitSignature, toInputPermit, makePermit, generateEip2098PermitSignature } from './utils/permit2'
 import {

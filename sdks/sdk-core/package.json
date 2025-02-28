@@ -37,8 +37,7 @@
   },
   "devDependencies": {
     "@types/big.js": "^6.2.2",
-    "@types/jest": "^29.5.14",
-    "tsdx": "^0.14.1"
+    "@types/jest": "^29.5.14"
   },
   "prettier": {
     "printWidth": 120,

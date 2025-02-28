@@ -1,6 +1,6 @@
 import { RoutePlanner, CommandType } from '../../utils/routerCommands'
 import { Trade as V2Trade, Pair } from '@uniswap/v2-sdk'
-import { Trade as V3Trade, Pool as V3Pool, encodeRouteToPath } from '@uniswap/v3-sdk'
+import { Trade as V3Trade, Pool as V3Pool, encodeRouteToPath } from '@treeder/uniswap-v3-sdk'
 import {
   Route as V4Route,
   Trade as V4Trade,

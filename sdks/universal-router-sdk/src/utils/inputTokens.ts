@@ -1,7 +1,7 @@
 import invariant from 'tiny-invariant'
 import { ethers } from 'ethers'
 import { validateAndParseAddress, BigintIsh } from '@treeder/uniswap-sdk-core'
-import { NFTPermitOptions, NonfungiblePositionManager } from '@uniswap/v3-sdk'
+import { NFTPermitOptions, NonfungiblePositionManager } from '@treeder/uniswap-v3-sdk'
 import { PermitSingle } from '@uniswap/permit2-sdk'
 import { CommandType, RoutePlanner } from './routerCommands'
 import { ROUTER_AS_RECIPIENT } from './constants'

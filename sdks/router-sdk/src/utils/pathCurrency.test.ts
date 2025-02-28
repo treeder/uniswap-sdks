@@ -1,5 +1,5 @@
 import { Ether, Token } from '@treeder/uniswap-sdk-core'
-import { encodeSqrtRatioX96 } from '@uniswap/v3-sdk'
+import { encodeSqrtRatioX96 } from '@treeder/uniswap-v3-sdk'
 import { Pool as V4Pool } from '@treeder/uniswap-v4-sdk'
 import { ADDRESS_ZERO } from '../constants'
 import { getPathCurrency } from './pathCurrency'

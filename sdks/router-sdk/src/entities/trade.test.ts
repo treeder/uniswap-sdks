@@ -11,7 +11,7 @@ import {
   TickMath,
   nearestUsableTick,
   encodeSqrtRatioX96,
-} from '@uniswap/v3-sdk'
+} from '@treeder/uniswap-v3-sdk'
 import { Pair, Route as V2RouteSDK } from '@uniswap/v2-sdk'
 import { MixedRouteSDK } from './mixedRoute/route'
 import { Route as V4RouteSDK, Pool as V4Pool } from '@treeder/uniswap-v4-sdk'

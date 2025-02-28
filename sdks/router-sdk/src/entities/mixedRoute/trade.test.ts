@@ -7,7 +7,7 @@ import {
   Pool as V3Pool,
   TickMath,
   TICK_SPACINGS,
-} from '@uniswap/v3-sdk'
+} from '@treeder/uniswap-v3-sdk'
 import { Pool as V4Pool } from '@treeder/uniswap-v4-sdk'
 import JSBI from 'jsbi'
 import { MixedRouteSDK } from './route'

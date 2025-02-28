@@ -9,7 +9,7 @@ warning: `swapERC20CallParameters()` to be deprecated in favor of `swapCallParam
 ```typescript
 import { TradeType } from '@treeder/uniswap-sdk-core'
 import { Trade as V2TradeSDK } from '@uniswap/v2-sdk'
-import { Trade as V3TradeSDK } from '@uniswap/v3-sdk'
+import { Trade as V3TradeSDK } from '@treeder/uniswap-v3-sdk'
 import { MixedRouteTrade, MixedRouteSDK, Trade as RouterTrade } from '@uniswap/router-sdk'
 
 const options = { slippageTolerance, recipient }
